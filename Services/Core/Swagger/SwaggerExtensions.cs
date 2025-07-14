@@ -1,5 +1,8 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using Core.Options;
+
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
 
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -7,17 +10,36 @@ namespace Core.Swagger;
 
 public static class SwaggerExtensions
 {
-    public static void UseCommonSwaggerDoc(this SwaggerGenOptions options, string name, string version)
+    public static void UseCommonSwaggerDoc(this SwaggerGenOptions options, IConfiguration configuration)
     {
-        options.SwaggerDoc(version, new OpenApiInfo
+        var apiConfiguration = configuration
+            .GetSection(ApiConfigurationOptions.Name)
+            .Get<ApiConfigurationOptions>();
+
+        ArgumentNullException.ThrowIfNull(apiConfiguration, nameof(apiConfiguration));
+
+        foreach (var apiVersion in apiConfiguration.ApiVersions)
         {
-            Title = name,
-            Version = version,
+            options.UseCommonSwaggerDoc(
+                apiVersion.Name,
+                apiVersion.Version,
+                apiConfiguration.ApiContact.Name,
+                apiConfiguration.ApiContact.Email,
+                apiConfiguration.ApiContact.Url);
+        }
+    }
+
+    public static void UseCommonSwaggerDoc(this SwaggerGenOptions options, string apiName, string apiVersion, string authorName, string authorEmail, string authorUrl)
+    {
+        options.SwaggerDoc(apiVersion, new OpenApiInfo
+        {
+            Title = apiName,
+            Version = apiVersion,
             Contact = new OpenApiContact
             {
-                Name = "Eduardo Dörr",
-                Email = "edudorr@hotmail.com",
-                Url = new Uri("https://github.com/EduardoDorr")
+                Name = authorName,
+                Email = authorEmail,
+                Url = new Uri(authorUrl)
             }
         });
     }

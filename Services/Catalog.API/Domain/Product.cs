@@ -1,5 +1,6 @@
 ﻿using Core.Entities;
 using Core.Helpers;
+using Core.Results;
 
 namespace Catalog.API.Domain;
 
@@ -8,7 +9,7 @@ public sealed class Product : BaseMongoEntity
     public string Uuid { get; private set; }
     public string Name { get; private set; }
     public string? Description { get; private set; }
-    public string Category { get; private set; }
+    public ProductCategory Category { get; private set; }
     public string? ImageUrl { get; private set; }
     public decimal Value { get; private set; }
     public decimal Weight { get; private set; }
@@ -18,7 +19,7 @@ public sealed class Product : BaseMongoEntity
     public Product(
         string name,
         string? description,
-        string category,
+        ProductCategory category,
         string? imageUrl,
         decimal value,
         decimal weight)
@@ -45,13 +46,32 @@ public sealed class Product : BaseMongoEntity
         Uuid = HashIdHelper.EncodeId(id);
     }
 
-    public void ChangePrice(decimal newValue)
+    public Result Update(
+        string name,
+        string? description,
+        ProductCategory category,
+        string? imageUrl,
+        decimal value,
+        decimal weight)
     {
-        if (newValue < 0)
-            throw new ArgumentOutOfRangeException(nameof(newValue), "Valor não pode ser negativo");
+        if (string.IsNullOrWhiteSpace(name))
+            return Result.Fail(ProductError.CannotUpdate);
 
-        Value = newValue;
+        if (value < 0)
+            return Result.Fail(ProductError.CannotUpdate);
 
-        SetUpdatedAtDate(DateTime.Now);
+        if (weight < 0)
+            return Result.Fail(ProductError.CannotUpdate);
+
+        Name = name;
+        Description = description;
+        Category = category;
+        ImageUrl = imageUrl;
+        Value = value;
+        Weight = weight;
+
+        SetUpdatedAtDate(DateTime.UtcNow);
+
+        return Result.Ok();
     }
 }

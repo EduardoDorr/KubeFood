@@ -1,100 +1,105 @@
-﻿using Catalog.API.Domain;
+﻿using Catalog.API.Application.CreateProduct;
+using Catalog.API.Application.DeleteProduct;
+using Catalog.API.Application.GetProduct;
+using Catalog.API.Application.GetProducts;
+using Catalog.API.Application.Models;
+using Catalog.API.Application.UpdateProduct;
 
-using Core.Helpers;
 using Core.Models.Pagination;
-using Core.Persistence.UnitOfWork;
+using Core.Results;
+
+using Microsoft.AspNetCore.Mvc;
 
 namespace Catalog.API.Api.Endpoints;
 
 public static class ProductEndpoint
 {
+    private const string ROUTE = "/api/v1/products";
+
     public static WebApplication MapProductEndpoints(this WebApplication app)
     {
-        var group = app.MapGroup("/api/v1/products")
+        var group = app.MapGroup(ROUTE)
             .WithTags("Products");
 
         group.MapGet("/", async (
-            IProductRepository repository,
-            int page,
-            int pageSize,
+            [AsParameters] PaginationParameters pagination,
+            [FromServices] IGetProductsQueryHandler service,
             CancellationToken cancellationToken) =>
         {
-            var products = await repository.GetAllAsync(page, pageSize, cancellationToken);
-            return Results.Ok(products);
+            var result = await service.HandleAsync(new(pagination), cancellationToken);
+
+            return result.Match(
+                onSuccess: success => Results.Ok(result.Value),
+                onFailure: error => error.ToProblemDetails());
         })
-        .Produces<PaginationResult<Product>>(StatusCodes.Status200OK)
+        .Produces<PaginationResult<ProductViewModel>>(StatusCodes.Status200OK)
         .Produces(StatusCodes.Status500InternalServerError);
 
         group.MapGet("/{uuid}", async (
-            IProductRepository repository,
             string uuid,
+            [FromServices] IGetProductQueryHandler service,
             CancellationToken cancellationToken) =>
         {
-            var product = await repository.GetByIdAsync(uuid, cancellationToken);
-            return product is not null ? Results.Ok(product) : Results.NotFound();
+            var result = await service.HandleAsync(new(uuid), cancellationToken);
+
+            return result.Match(
+                onSuccess: success => Results.Ok(result.Value),
+                onFailure: error => error.ToProblemDetails());
         })
-        .Produces<Product>(StatusCodes.Status200OK)
+        .Produces<ProductViewModel>(StatusCodes.Status200OK)
         .Produces(StatusCodes.Status404NotFound)
         .Produces(StatusCodes.Status500InternalServerError);
 
         group.MapPost("/", async (
-            IProductRepository repository,
-            IUnitOfWork unitOfWork,
-            Product product,
+            CreateProductCommand command,
+            [FromServices] ICreateProductCommandHandler service,
             CancellationToken cancellationToken) =>
         {
-            if (product is null)
+            if (command is null)
                 return Results.BadRequest("Product cannot be null.");
 
-            repository.Create(product);
-            await unitOfWork.SaveChangesAsync(cancellationToken);
+            var result = await service.HandleAsync(command, cancellationToken);
 
-            product.SetUuid(product.Id);
+            return result.Match(
+                onSuccess: success => Results.Created($"{ROUTE}/{success}", command),
+                onFailure: error => error.ToProblemDetails());
+        })
+        .Produces<string>(StatusCodes.Status201Created)
+        .Produces(StatusCodes.Status500InternalServerError);
 
-            repository.Update(product);
-            await unitOfWork.SaveChangesAsync(cancellationToken);
-
-            return Results.Created($"/api/v1/products/{product.Id}", product);
-        });
-
-        group.MapPatch("/{uiid}", async (
-            IProductRepository repository,
-            IUnitOfWork unitOfWork,
+        group.MapPut("/{uiid}", async (
             string uuid,
-            decimal newPrice,
+            [FromBody] UpdateProductInputModel model,
+            [FromServices] IUpdateProductCommandHandler service,
             CancellationToken cancellationToken) =>
         {
-            var product = await repository.GetByIdAsync(uuid, cancellationToken);
+            if (model is null)
+                return Results.BadRequest("Product cannot be null.");
 
-            if (product is null)
-                return Results.NotFound("Product cannot be null.");
+            var result = await service.HandleAsync(model.ToCommand(uuid), cancellationToken);
 
-            product.ChangePrice(newPrice);
-
-            repository.Update(product);
-            await unitOfWork.SaveChangesAsync(cancellationToken);
-
-            return Results.NoContent();
-        });
+            return result.Match(
+                onSuccess: () => Results.NoContent(),
+                onFailure: error => error.ToProblemDetails());
+        })
+        .Produces(StatusCodes.Status204NoContent)
+        .Produces(StatusCodes.Status404NotFound)
+        .Produces(StatusCodes.Status500InternalServerError);
 
         group.MapDelete("/{uuid}", async (
-            IProductRepository repository,
-            IUnitOfWork unitOfWork,
             string uuid,
+            [FromServices] IDeleteProductCommandHandler service,
             CancellationToken cancellationToken) =>
         {
-            var product = await repository.GetByIdAsync(uuid, cancellationToken);
+            var result = await service.HandleAsync(new(uuid), cancellationToken);
 
-            if (product is null)
-                return Results.NotFound("Product not found.");
-
-            product.Deactivate();
-
-            repository.Update(product);
-            await unitOfWork.SaveChangesAsync(cancellationToken);
-
-            return Results.NoContent();
-        });
+            return result.Match(
+                onSuccess: () => Results.NoContent(),
+                onFailure: error => error.ToProblemDetails());
+        })
+        .Produces(StatusCodes.Status204NoContent)
+        .Produces(StatusCodes.Status404NotFound)
+        .Produces(StatusCodes.Status500InternalServerError);
 
         return app;
     }

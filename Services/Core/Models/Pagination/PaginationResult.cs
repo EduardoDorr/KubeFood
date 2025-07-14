@@ -1,4 +1,6 @@
-﻿namespace Core.Models.Pagination;
+﻿using System.Collections.Immutable;
+
+namespace Core.Models.Pagination;
 
 public class PaginationResult<T>
 {
@@ -19,15 +21,15 @@ public class PaginationResult<T>
         TotalCount = totalCount;
     }
 
-    public PaginationResult(int page, int pageSize, int totalCount, int totalPages, List<T> data)
+    public PaginationResult(int page, int pageSize, int totalCount, int totalPages, IEnumerable<T> data)
     {
         Page = page;
         PageSize = pageSize;
         TotalCount = totalCount;
         TotalPages = totalPages;
-        Data = data;
+        Data = data.ToImmutableList();
     }    
 
     public void SetTotalPages(int total) => TotalPages = total;
-    public void SetData(List<T> values) => Data = values;
+    public void SetData(IEnumerable<T> values) => Data = values.ToImmutableList();
 }

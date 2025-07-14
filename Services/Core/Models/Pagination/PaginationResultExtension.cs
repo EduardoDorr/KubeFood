@@ -28,7 +28,7 @@ public static class PaginationResultExtension
         return result;
     }
 
-    public static PaginationResult<T> Map<P, T>(this PaginationResult<P> pagination, List<T> data)
+    public static PaginationResult<T> Map<P, T>(this PaginationResult<P> pagination, IEnumerable<T> data)
         => new
             (
                 pagination.Page,
