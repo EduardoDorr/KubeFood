@@ -1,4 +1,4 @@
-﻿namespace Core.Results.Errors;
+﻿namespace KubeFood.Core.Results.Errors;
 
 public enum ErrorType
 {

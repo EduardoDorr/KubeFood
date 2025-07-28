@@ -1,6 +1,6 @@
-﻿using Core.Results.Errors;
+﻿using KubeFood.Core.Results.Errors;
 
-namespace Catalog.API.Domain;
+namespace KubeFood.Catalog.API.Domain;
 
 public static class ProductError
 {

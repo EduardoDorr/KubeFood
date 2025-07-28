@@ -1,6 +1,6 @@
-﻿using Core.Entities;
+﻿using KubeFood.Core.Entities;
 
-namespace Core.Persistence.Repositories;
+namespace KubeFood.Core.Persistence.Repositories;
 
 public interface IGenericRepository<TEntity>
     : IReadableRepository<TEntity>,

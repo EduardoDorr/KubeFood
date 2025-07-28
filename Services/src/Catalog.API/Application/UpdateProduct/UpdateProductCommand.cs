@@ -1,6 +1,6 @@
-﻿using Catalog.API.Domain;
+﻿using KubeFood.Catalog.API.Domain;
 
-namespace Catalog.API.Application.UpdateProduct;
+namespace KubeFood.Catalog.API.Application.UpdateProduct;
 
 public sealed record UpdateProductCommand(
     string Uiid,

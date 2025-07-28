@@ -1,9 +1,11 @@
-﻿using Core.Entities;
-using Core.Persistence.Repositories;
-using Core.Results;
-using Core.Results.Errors;
+﻿using Core.Results.Errors;
 
-namespace Core.Services;
+using KubeFood.Core.Entities;
+using KubeFood.Core.Persistence.Repositories;
+using KubeFood.Core.Results;
+using KubeFood.Core.Results.Errors;
+
+namespace KubeFood.Core.Services;
 
 public static class RepositoryExtension
 {

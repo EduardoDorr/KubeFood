@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Core.Persistence.Outbox;
+using KubeFood.Core.Persistence.Outbox;
 
-namespace Core.Persistence.Configurations;
+namespace KubeFood.Core.Persistence.Configurations;
 
 public class OutboxMessageConfiguration : IEntityTypeConfiguration<OutboxMessage>
 {

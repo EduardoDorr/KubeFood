@@ -1,8 +1,8 @@
 ﻿using System.Linq.Expressions;
 
-using Core.Entities;
+using KubeFood.Core.Entities;
 
-namespace Core.Persistence.Repositories;
+namespace KubeFood.Core.Persistence.Repositories;
 
 public interface IReadableByRepository<TEntity> where TEntity : BaseEntity
 {

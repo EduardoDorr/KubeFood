@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Catalog.API", "src\Catalog.API\Catalog.API.csproj", "{682C0D14-29D7-453C-8FC1-548116FFEB34}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KubeFood.Catalog.API", "src\Catalog.API\KubeFood.Catalog.API.csproj", "{682C0D14-29D7-453C-8FC1-548116FFEB34}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "src\Core\Core.csproj", "{55742FAD-DDAE-4369-AC19-D2E5D59F7201}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KubeFood.Core", "src\Core\KubeFood.Core.csproj", "{55742FAD-DDAE-4369-AC19-D2E5D59F7201}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Delivery.Worker", "src\Delivery.Worker\Delivery.Worker.csproj", "{65655B2B-FE1D-4DD3-9D78-2215426A4841}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KubeFood.Delivery.Worker", "src\Delivery.Worker\KubeFood.Delivery.Worker.csproj", "{65655B2B-FE1D-4DD3-9D78-2215426A4841}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auth.API", "src\Auth.API\Auth.API.csproj", "{3AA9AEF9-7D2B-4283-BD72-0354EE3A42CC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KubeFood.Auth.API", "src\Auth.API\KubeFood.Auth.API.csproj", "{3AA9AEF9-7D2B-4283-BD72-0354EE3A42CC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Api", "Api", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
@@ -21,9 +21,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Compose", "Compose", "{84AC
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{BC50B79B-A9B7-48BC-99CB-938E72ACBB10}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Order.API", "src\Order.API\Order.API.csproj", "{A674D8B7-6624-7E11-33E2-3E2487E57717}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KubeFood.Order.API", "src\Order.API\KubeFood.Order.API.csproj", "{A674D8B7-6624-7E11-33E2-3E2487E57717}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inventory.API", "src\Inventory.API\Inventory.API.csproj", "{2E785CC3-85E3-925F-1A0A-C08ACD599AA9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KubeFood.Inventory.API", "src\Inventory.API\KubeFood.Inventory.API.csproj", "{2E785CC3-85E3-925F-1A0A-C08ACD599AA9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

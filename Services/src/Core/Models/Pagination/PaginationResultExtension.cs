@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Core.Models.Pagination;
+namespace KubeFood.Core.Models.Pagination;
 
 public static class PaginationResultExtension
 {

@@ -1,4 +1,4 @@
-﻿using Core.Options;
+﻿using KubeFood.Core.Options;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -6,7 +6,7 @@ using Microsoft.OpenApi.Models;
 
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace Core.Swagger;
+namespace KubeFood.Core.Swagger;
 
 public static class SwaggerExtensions
 {

@@ -1,4 +1,4 @@
-﻿namespace Core.Persistence.UnitOfWork;
+﻿namespace KubeFood.Core.Persistence.UnitOfWork;
 
 public interface IUnitOfWork
 {

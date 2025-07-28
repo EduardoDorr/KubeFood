@@ -1,13 +1,12 @@
-﻿using Catalog.API.Domain;
-
-using Core.Persistence.Configurations;
+﻿using KubeFood.Catalog.API.Domain;
+using KubeFood.Core.Persistence.Configurations;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 using MongoDB.EntityFrameworkCore.Extensions;
 
-namespace Catalog.API.Infrastructure.Persistence.Configurations;
+namespace KubeFood.Catalog.API.Infrastructure.Persistence.Configurations;
 
 internal class ProductConfiguration : BaseMongoEntityConfiguration<Product>
 {

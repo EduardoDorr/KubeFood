@@ -1,10 +1,10 @@
-﻿using Core.Entities;
-using Core.Helpers;
-using Core.Results;
+﻿using KubeFood.Core.Entities;
+using KubeFood.Core.Helpers;
+using KubeFood.Core.Results;
 
 using MongoDB.Bson;
 
-namespace Catalog.API.Domain;
+namespace KubeFood.Catalog.API.Domain;
 
 public sealed class Product : BaseMongoEntity
 {
@@ -43,7 +43,7 @@ public sealed class Product : BaseMongoEntity
 
     public void SetUuid(ObjectId id)
     {
-        Uuid = HashIdHelper.EncodeId(id);
+        Uuid = id.EncodeId();
     }
 
     public Result Update(

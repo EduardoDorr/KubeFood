@@ -1,11 +1,10 @@
-﻿using Catalog.API.Domain;
+﻿using KubeFood.Catalog.API.Domain;
+using KubeFood.Core.Helpers;
+using KubeFood.Core.Interfaces;
+using KubeFood.Core.Persistence.UnitOfWork;
+using KubeFood.Core.Results;
 
-using Core.Helpers;
-using Core.Interfaces;
-using Core.Persistence.UnitOfWork;
-using Core.Results;
-
-namespace Catalog.API.Application.UpdateProductImage;
+namespace KubeFood.Catalog.API.Application.UpdateProductImage;
 
 public interface IUpdateProductImageCommandHandler
     : IRequestHandler<UpdateProductImageCommand, Result>

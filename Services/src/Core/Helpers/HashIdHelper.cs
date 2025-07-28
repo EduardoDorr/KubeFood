@@ -4,7 +4,7 @@ using HashidsNet;
 
 using MongoDB.Bson;
 
-namespace Core.Helpers;
+namespace KubeFood.Core.Helpers;
 
 public static class HashIdHelper
 {

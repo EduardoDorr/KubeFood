@@ -1,3 +1,3 @@
-﻿namespace Core.Entities;
+﻿namespace KubeFood.Core.Entities;
 
 public interface IAggregateRoot { }

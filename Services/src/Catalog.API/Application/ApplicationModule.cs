@@ -1,12 +1,12 @@
-﻿using Catalog.API.Application.CreateProduct;
-using Catalog.API.Application.DeleteProduct;
-using Catalog.API.Application.GetProduct;
-using Catalog.API.Application.GetProducts;
-using Catalog.API.Application.GetProductsByIds;
-using Catalog.API.Application.UpdateProduct;
-using Catalog.API.Application.UpdateProductImage;
+﻿using KubeFood.Catalog.API.Application.CreateProduct;
+using KubeFood.Catalog.API.Application.DeleteProduct;
+using KubeFood.Catalog.API.Application.GetProduct;
+using KubeFood.Catalog.API.Application.GetProducts;
+using KubeFood.Catalog.API.Application.GetProductsByIds;
+using KubeFood.Catalog.API.Application.UpdateProduct;
+using KubeFood.Catalog.API.Application.UpdateProductImage;
 
-namespace Catalog.API.Application;
+namespace KubeFood.Catalog.API.Application;
 
 public static class ApplicationModule
 {

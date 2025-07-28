@@ -1,13 +1,13 @@
-﻿using Core.Errors;
-using Core.Interfaces;
-using Core.Options;
-using Core.Results;
+﻿using KubeFood.Core.Errors;
+using KubeFood.Core.Interfaces;
+using KubeFood.Core.Options;
+using KubeFood.Core.Results;
 
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 
-namespace Core.Services;
+namespace KubeFood.Core.Services;
 
 public interface ISaveImageService
     : IRequestHandler<IFormFile, Result<string>>

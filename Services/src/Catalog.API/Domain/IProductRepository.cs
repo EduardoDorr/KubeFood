@@ -1,8 +1,8 @@
-﻿using Core.Models.Pagination;
+﻿using KubeFood.Core.Models.Pagination;
 
 using MongoDB.Bson;
 
-namespace Catalog.API.Domain;
+namespace KubeFood.Catalog.API.Domain;
 
 public interface IProductRepository
 {

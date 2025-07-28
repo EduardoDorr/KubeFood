@@ -1,8 +1,9 @@
-﻿using Core.Persistence.UnitOfWork;
+﻿using KubeFood.Catalog.API.Infrastructure.Persistence;
+using KubeFood.Core.Persistence.UnitOfWork;
 
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace Catalog.API.Infrastructure.Persistence.Repositories;
+namespace KubeFood.Catalog.API.Infrastructure.Persistence.Repositories;
 
 public class UnitOfWork : IUnitOfWork, IDisposable
 {

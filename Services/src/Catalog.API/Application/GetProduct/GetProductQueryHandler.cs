@@ -1,11 +1,10 @@
-﻿using Catalog.API.Application.Models;
-using Catalog.API.Domain;
+﻿using KubeFood.Catalog.API.Application.Models;
+using KubeFood.Catalog.API.Domain;
+using KubeFood.Core.Helpers;
+using KubeFood.Core.Interfaces;
+using KubeFood.Core.Results;
 
-using Core.Helpers;
-using Core.Interfaces;
-using Core.Results;
-
-namespace Catalog.API.Application.GetProduct;
+namespace KubeFood.Catalog.API.Application.GetProduct;
 
 public interface IGetProductQueryHandler
     : IRequestHandler<GetProductQuery, Result<ProductViewModel?>>

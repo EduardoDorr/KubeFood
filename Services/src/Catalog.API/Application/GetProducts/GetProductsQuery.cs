@@ -1,6 +1,6 @@
-﻿using Core.Models.Pagination;
+﻿using KubeFood.Core.Models.Pagination;
 
-namespace Catalog.API.Application.GetProducts;
+namespace KubeFood.Catalog.API.Application.GetProducts;
 
 public sealed record GetProductsQuery(
     PaginationParameters Pagination);

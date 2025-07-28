@@ -1,14 +1,14 @@
-﻿using Catalog.API.Application.Models;
-using Catalog.API.Domain;
+﻿using Core.Models.Pagination;
 
-using Core.Helpers;
-using Core.Interfaces;
-using Core.Models.Pagination;
-using Core.Results;
+using KubeFood.Catalog.API.Application.Models;
+using KubeFood.Catalog.API.Domain;
+using KubeFood.Core.Helpers;
+using KubeFood.Core.Interfaces;
+using KubeFood.Core.Results;
 
 using MongoDB.Bson;
 
-namespace Catalog.API.Application.GetProductsByIds;
+namespace KubeFood.Catalog.API.Application.GetProductsByIds;
 
 public interface IGetProductsByUuidsQueryHandler
     : IRequestHandler<GetProductsByUuidsQuery, Result<IEnumerable<ProductViewModel>>>

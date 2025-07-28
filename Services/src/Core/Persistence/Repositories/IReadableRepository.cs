@@ -1,7 +1,7 @@
-﻿using Core.Entities;
-using Core.Models.Pagination;
+﻿using KubeFood.Core.Entities;
+using KubeFood.Core.Models.Pagination;
 
-namespace Core.Persistence.Repositories;
+namespace KubeFood.Core.Persistence.Repositories;
 
 public interface IReadableRepository<TEntity> where TEntity : BaseEntity
 {

@@ -1,14 +1,13 @@
-﻿
-using Catalog.API.Application.Models;
-using Catalog.API.Domain;
+﻿using Catalog.API.Application.Models;
 
-using Core.Interfaces;
-using Core.Persistence.UnitOfWork;
-using Core.Results;
+using KubeFood.Catalog.API.Domain;
+using KubeFood.Core.Interfaces;
+using KubeFood.Core.Persistence.UnitOfWork;
+using KubeFood.Core.Results;
 
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Catalog.API.Application.CreateProduct;
+namespace KubeFood.Catalog.API.Application.CreateProduct;
 
 public interface ICreateProductCommandHandler
     : IRequestHandler<CreateProductCommand, Result<string>>

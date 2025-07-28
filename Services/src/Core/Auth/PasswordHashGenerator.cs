@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using System.Security.Cryptography;
 
-namespace Core.Auth;
+namespace KubeFood.Core.Auth;
 
 public static class PasswordHashGenerator
 {

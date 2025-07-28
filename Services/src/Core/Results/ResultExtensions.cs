@@ -1,9 +1,9 @@
-﻿using Core.Results.Errors;
+﻿using KubeFood.Core.Results.Errors;
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Core.Results;
+namespace KubeFood.Core.Results;
 
 public static class ResultExtensions
 {

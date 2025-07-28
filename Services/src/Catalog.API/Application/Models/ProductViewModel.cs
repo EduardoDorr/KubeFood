@@ -1,6 +1,6 @@
-﻿using Catalog.API.Domain;
+﻿using KubeFood.Catalog.API.Domain;
 
-namespace Catalog.API.Application.Models;
+namespace KubeFood.Catalog.API.Application.Models;
 
 public sealed record ProductViewModel(
     string Uuid,

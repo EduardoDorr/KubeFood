@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Core.Persistence.DbConnectionFactories;
+using KubeFood.Core.Persistence.DbConnectionFactories;
 
-namespace Core.Persistence.DbConnectionFactories;
+namespace KubeFood.Core.Persistence.DbConnectionFactories;
 
 public static class DbConnectionFactory
 {

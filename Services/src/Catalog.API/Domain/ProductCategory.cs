@@ -1,4 +1,4 @@
-﻿namespace Catalog.API.Domain;
+﻿namespace KubeFood.Catalog.API.Domain;
 
 public enum ProductCategory
 {

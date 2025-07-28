@@ -1,6 +1,6 @@
-﻿using Core.DomainEvents;
+﻿using KubeFood.Core.DomainEvents;
 
-namespace Core.Entities;
+namespace KubeFood.Core.Entities;
 
 public abstract class BaseEntity
 {
@@ -34,6 +34,6 @@ public abstract class BaseEntity
     public void ClearDomainEvents()
         => _domainEvents.Clear();
 
-    protected void RaiseDomainEvent(IDomainEvent domainEvent)
+    protected void AddDomainEvent(IDomainEvent domainEvent)
         => _domainEvents.Add(domainEvent);
 }

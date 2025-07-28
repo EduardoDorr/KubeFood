@@ -1,12 +1,11 @@
-﻿using Catalog.API.Domain;
-using Catalog.API.Infrastructure.Persistence;
-using Catalog.API.Infrastructure.Persistence.Repositories;
-
-using Core.Persistence.UnitOfWork;
+﻿using KubeFood.Catalog.API.Domain;
+using KubeFood.Catalog.API.Infrastructure.Persistence;
+using KubeFood.Catalog.API.Infrastructure.Persistence.Repositories;
+using KubeFood.Core.Persistence.UnitOfWork;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Catalog.API.Infrastructure;
+namespace KubeFood.Catalog.API.Infrastructure;
 
 public static class InfrastructureModule
 {

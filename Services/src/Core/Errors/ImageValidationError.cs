@@ -1,6 +1,6 @@
-﻿using Core.Results.Errors;
+﻿using KubeFood.Core.Results.Errors;
 
-namespace Core.Errors;
+namespace KubeFood.Core.Errors;
 
 public static class ImageValidationError
 {

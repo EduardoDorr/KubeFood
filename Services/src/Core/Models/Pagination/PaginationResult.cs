@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
 
-namespace Core.Models.Pagination;
+namespace KubeFood.Core.Models.Pagination;
 
 public class PaginationResult<T>
 {

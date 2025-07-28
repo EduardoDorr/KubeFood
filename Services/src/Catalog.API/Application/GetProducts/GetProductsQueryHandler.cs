@@ -1,11 +1,10 @@
-﻿using Catalog.API.Application.Models;
-using Catalog.API.Domain;
+﻿using KubeFood.Catalog.API.Application.Models;
+using KubeFood.Catalog.API.Domain;
+using KubeFood.Core.Interfaces;
+using KubeFood.Core.Models.Pagination;
+using KubeFood.Core.Results;
 
-using Core.Interfaces;
-using Core.Models.Pagination;
-using Core.Results;
-
-namespace Catalog.API.Application.GetProducts;
+namespace KubeFood.Catalog.API.Application.GetProducts;
 
 public interface IGetProductsQueryHandler
     : IRequestHandler<GetProductsQuery, Result<PaginationResult<ProductViewModel>>>

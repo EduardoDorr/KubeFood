@@ -1,8 +1,8 @@
-﻿using Core.DomainEvents;
+﻿using KubeFood.Core.DomainEvents;
 
 using MongoDB.Bson;
 
-namespace Core.Entities;
+namespace KubeFood.Core.Entities;
 
 public abstract class BaseMongoEntity
 {

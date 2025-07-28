@@ -1,6 +1,6 @@
-﻿using Catalog.API.Domain;
+﻿using KubeFood.Catalog.API.Domain;
 
-namespace Catalog.API.Application.CreateProduct;
+namespace KubeFood.Catalog.API.Application.CreateProduct;
 
 public sealed record CreateProductCommand(
     string Name,

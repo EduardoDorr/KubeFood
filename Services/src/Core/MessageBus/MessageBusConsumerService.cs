@@ -4,12 +4,12 @@ using System.Text.Json;
 using Microsoft.Extensions.Options;
 
 using RabbitMQ.Client;
-using Core.Options;
 using Microsoft.Extensions.Hosting;
 using RabbitMQ.Client.Events;
 using Microsoft.Extensions.DependencyInjection;
+using KubeFood.Core.Options;
 
-namespace Core.MessageBus;
+namespace KubeFood.Core.MessageBus;
 
 public class MessageBusConsumerService<T> : BackgroundService
 {

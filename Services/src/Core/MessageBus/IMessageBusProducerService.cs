@@ -1,4 +1,4 @@
-﻿namespace Core.MessageBus;
+﻿namespace KubeFood.Core.MessageBus;
 
 public interface IMessageBusProducerService
 {

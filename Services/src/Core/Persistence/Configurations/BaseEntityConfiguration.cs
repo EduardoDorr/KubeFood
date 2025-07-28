@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Core.Entities;
+using KubeFood.Core.Entities;
 
-namespace Core.Persistence.Configurations;
+namespace KubeFood.Core.Persistence.Configurations;
 
 public abstract class BaseEntityConfiguration<TBase> : IEntityTypeConfiguration<TBase> where TBase : BaseEntity
 {

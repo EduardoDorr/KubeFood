@@ -1,8 +1,8 @@
-﻿using Catalog.API.Domain;
+﻿using KubeFood.Catalog.API.Domain;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Catalog.API.Infrastructure.Persistence.Seeds;
+namespace KubeFood.Catalog.API.Infrastructure.Persistence.Seeds;
 
 public static class CatalogDbSeed
 {

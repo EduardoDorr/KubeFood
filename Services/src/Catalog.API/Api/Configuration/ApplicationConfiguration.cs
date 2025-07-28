@@ -1,15 +1,14 @@
 ﻿using System.Text.Json.Serialization;
 
-using Catalog.API.Api.Endpoints;
-using Catalog.API.Application;
-using Catalog.API.Infrastructure;
-using Catalog.API.Infrastructure.Persistence.Seeds;
-
-using Core.Swagger;
+using KubeFood.Catalog.API.Api.Endpoints;
+using KubeFood.Catalog.API.Application;
+using KubeFood.Catalog.API.Infrastructure;
+using KubeFood.Catalog.API.Infrastructure.Persistence.Seeds;
+using KubeFood.Core.Swagger;
 
 using Microsoft.AspNetCore.Http.Json;
 
-namespace Catalog.API.Api.Configuration;
+namespace KubeFood.Catalog.API.Api.Configuration;
 
 public static class ApplicationConfiguration
 {

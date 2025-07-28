@@ -1,4 +1,4 @@
-﻿namespace Core.Options;
+﻿namespace KubeFood.Core.Options;
 
 public class ApiConfigurationOptions
 {

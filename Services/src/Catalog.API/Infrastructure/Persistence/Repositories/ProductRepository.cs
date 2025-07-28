@@ -1,14 +1,13 @@
-﻿
-using Catalog.API.Domain;
-
-using Core.Models.Pagination;
+﻿using KubeFood.Catalog.API.Domain;
+using KubeFood.Catalog.API.Infrastructure.Persistence;
+using KubeFood.Core.Models.Pagination;
 
 using Microsoft.EntityFrameworkCore;
 
 using MongoDB.Bson;
 using MongoDB.Driver;
 
-namespace Catalog.API.Infrastructure.Persistence.Repositories;
+namespace KubeFood.Catalog.API.Infrastructure.Persistence.Repositories;
 
 public class ProductRepository : IProductRepository
 {

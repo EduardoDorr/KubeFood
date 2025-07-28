@@ -1,4 +1,4 @@
-﻿namespace Core.IntegrationsEvents;
+﻿namespace KubeFood.Core.IntegrationsEvents;
 
 public sealed record SendEmailEvent(
     string Origin,

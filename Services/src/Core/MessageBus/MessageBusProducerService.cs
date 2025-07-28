@@ -4,9 +4,9 @@ using System.Text.Json;
 using Microsoft.Extensions.Options;
 
 using RabbitMQ.Client;
-using Core.Options;
+using KubeFood.Core.Options;
 
-namespace Core.MessageBus;
+namespace KubeFood.Core.MessageBus;
 
 public class MessageBusProducerService : IMessageBusProducerService
 {

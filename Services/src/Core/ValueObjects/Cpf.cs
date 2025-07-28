@@ -1,7 +1,7 @@
-﻿using Core.Results;
-using Core.Results.Errors;
+﻿using KubeFood.Core.Results;
+using KubeFood.Core.Results.Errors;
 
-namespace Core.ValueObjects;
+namespace KubeFood.Core.ValueObjects;
 
 public sealed record Cpf
 {

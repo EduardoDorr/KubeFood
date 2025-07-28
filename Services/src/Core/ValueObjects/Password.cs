@@ -1,10 +1,10 @@
 ﻿using System.Text.RegularExpressions;
 
-using Core.Auth;
-using Core.Results;
-using Core.Results.Errors;
+using KubeFood.Core.Auth;
+using KubeFood.Core.Results;
+using KubeFood.Core.Results.Errors;
 
-namespace Core.ValueObjects;
+namespace KubeFood.Core.ValueObjects;
 
 public sealed record Password
 {

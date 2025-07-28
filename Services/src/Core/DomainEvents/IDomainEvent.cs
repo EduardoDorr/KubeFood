@@ -1,5 +1,5 @@
 ﻿using MediatR;
 
-namespace Core.DomainEvents;
+namespace KubeFood.Core.DomainEvents;
 
 public interface IDomainEvent : INotification { }

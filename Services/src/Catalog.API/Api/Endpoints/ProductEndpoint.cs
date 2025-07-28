@@ -1,18 +1,17 @@
-﻿using Catalog.API.Application.CreateProduct;
-using Catalog.API.Application.DeleteProduct;
-using Catalog.API.Application.GetProduct;
-using Catalog.API.Application.GetProducts;
-using Catalog.API.Application.GetProductsByIds;
-using Catalog.API.Application.Models;
-using Catalog.API.Application.UpdateProduct;
-using Catalog.API.Application.UpdateProductImage;
-
-using Core.Models.Pagination;
-using Core.Results;
+﻿using KubeFood.Catalog.API.Application.CreateProduct;
+using KubeFood.Catalog.API.Application.DeleteProduct;
+using KubeFood.Catalog.API.Application.GetProduct;
+using KubeFood.Catalog.API.Application.GetProducts;
+using KubeFood.Catalog.API.Application.GetProductsByIds;
+using KubeFood.Catalog.API.Application.Models;
+using KubeFood.Catalog.API.Application.UpdateProduct;
+using KubeFood.Catalog.API.Application.UpdateProductImage;
+using KubeFood.Core.Models.Pagination;
+using KubeFood.Core.Results;
 
 using Microsoft.AspNetCore.Mvc;
 
-namespace Catalog.API.Api.Endpoints;
+namespace KubeFood.Catalog.API.Api.Endpoints;
 
 public static class ProductEndpoint
 {

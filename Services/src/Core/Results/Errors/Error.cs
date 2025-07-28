@@ -1,4 +1,4 @@
-﻿namespace Core.Results.Errors;
+﻿namespace KubeFood.Core.Results.Errors;
 
 public sealed record Error(string Code, string Message, ErrorType Type) : IError
 {

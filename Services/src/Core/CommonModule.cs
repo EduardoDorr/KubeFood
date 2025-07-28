@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Core.MessageBus;
+using KubeFood.Core.MessageBus;
 
-namespace Core;
+namespace KubeFood.Core;
 
 public static class CommonModule
 {

@@ -1,6 +1,6 @@
-﻿using Core.Results.Errors;
+﻿using KubeFood.Core.Results.Errors;
 
-namespace Core.Results;
+namespace KubeFood.Core.Results;
 
 public class Result : ResultBase
 {

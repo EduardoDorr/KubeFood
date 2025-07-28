@@ -1,4 +1,4 @@
-﻿namespace Core.Persistence.Outbox;
+﻿namespace KubeFood.Core.Persistence.Outbox;
 
 public sealed class OutboxMessage
 {

@@ -1,4 +1,4 @@
-﻿namespace Core.Interfaces;
+﻿namespace KubeFood.Core.Interfaces;
 
 public interface IRequestHandler<in TRequest, TResult>
     where TRequest : notnull

@@ -1,4 +1,4 @@
-﻿namespace Core.Auth;
+﻿namespace KubeFood.Core.Auth;
 
 public interface IAuthService
 {
