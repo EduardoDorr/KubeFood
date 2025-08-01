@@ -5,6 +5,7 @@ namespace KubeFood.Order.API.Domain;
 
 public class Order : BaseEntity
 {
+    public Guid UniqueId { get; private set; }
     public int CustomerId { get; private set; }
     public Address DeliveryAddress { get; private set; }
     public List<OrderItem> Items { get; private set; } = [];
@@ -12,23 +13,25 @@ public class Order : BaseEntity
     public PaymentType PaymentType { get; private set; }
     public string? TrackingCode { get; private set; }
     public string? FailureReason { get; private set; }
-    public decimal TotalPrice => Items.Sum(item => item.Total);
+    public decimal TotalPrice => Items.Sum(item => item.TotalPrice);
 
-    protected Order() { }
+    protected Order()
+    {
+        UniqueId = Guid.NewGuid();
+    }
 
     public Order(
         int customerId,
         Address deliveryAddress,
         List<string> itemIds,
-        OrderStatus status,
-        PaymentType paymentType)
+        PaymentType paymentType) : this()
     {
         CustomerId = customerId;
         DeliveryAddress = deliveryAddress;
-        Status = status;
+        Status = OrderStatus.Pending;
         PaymentType = paymentType;
 
-        AddDomainEvent(new OrderRequested(Id, itemIds));
+        AddDomainEvent(new OrderRequested(UniqueId, itemIds));
     }
 
     public Order(
@@ -36,7 +39,7 @@ public class Order : BaseEntity
         Address deliveryAddress,
         List<OrderItem> items,
         OrderStatus status,
-        PaymentType paymentType)
+        PaymentType paymentType) : this()
     {
         CustomerId = customerId;
         DeliveryAddress = deliveryAddress;
@@ -45,8 +48,10 @@ public class Order : BaseEntity
 
         AddItems(items);
 
-        AddDomainEvent(new OrderRequested(
-            Id, items.Select(item => item.ProductId).ToList()));
+        AddDomainEvent(
+            new OrderRequested(
+                UniqueId,
+                items.Select(item => item.ProductId).ToList()));
     }
 
     public void AddItems(List<OrderItem> items)
@@ -56,6 +61,9 @@ public class Order : BaseEntity
 
         Items.AddRange(items);
     }
+
+    public void SetDeliveryAddress(Address deliveryAddress)
+        => DeliveryAddress = deliveryAddress;
 
     public void SetStatus(OrderStatus status)
         => Status = status;

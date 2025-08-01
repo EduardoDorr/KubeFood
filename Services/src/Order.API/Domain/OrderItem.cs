@@ -4,14 +4,20 @@ namespace KubeFood.Order.API.Domain;
 
 public class OrderItem : BaseEntity
 {
+    public int OrderId { get; private set; }
     public string ProductId { get; private set; }
     public string Name { get; private set; }
     public decimal Price { get; private set; }
     public int Quantity { get; private set; }
-    public decimal Total => Price * Quantity;
+    public decimal TotalPrice => Price * Quantity;
 
-    public OrderItem(string productId, string name, decimal price, int quantity)
+    public virtual Order Order { get; private set; }
+
+    protected OrderItem() { }
+
+    public OrderItem(int orderId, string productId, string name, decimal price, int quantity)
     {
+        OrderId = orderId;
         ProductId = productId;
         Name = name;
         Price = price;

@@ -4,7 +4,7 @@ namespace KubeFood.Core.Models.Pagination;
 
 public static class PaginationResultExtension
 {
-    public static async Task<PaginationResult<T>> GetPaged<T>(
+    public static async Task<PaginationResult<T>> GetPagedAsync<T>(
         this IQueryable<T> query,
         int page,
         int pageSize,

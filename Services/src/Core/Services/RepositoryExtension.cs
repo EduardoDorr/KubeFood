@@ -1,6 +1,4 @@
-﻿using Core.Results.Errors;
-
-using KubeFood.Core.Entities;
+﻿using KubeFood.Core.Entities;
 using KubeFood.Core.Persistence.Repositories;
 using KubeFood.Core.Results;
 using KubeFood.Core.Results.Errors;

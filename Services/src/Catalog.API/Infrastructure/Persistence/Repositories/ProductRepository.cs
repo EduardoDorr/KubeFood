@@ -23,7 +23,7 @@ public class ProductRepository : IProductRepository
         var products = _context.Products.AsNoTracking();
 
         return await products
-            .GetPaged(page, pageSize, cancellationToken);
+            .GetPagedAsync(page, pageSize, cancellationToken);
     }
 
     public async Task<IEnumerable<Product>> GetByIdsAsync(IEnumerable<ObjectId> productIds, CancellationToken cancellationToken = default)

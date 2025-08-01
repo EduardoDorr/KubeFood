@@ -1,6 +1,4 @@
-﻿using Core.Models.Pagination;
-
-using KubeFood.Catalog.API.Application.Models;
+﻿using KubeFood.Catalog.API.Application.Models;
 using KubeFood.Catalog.API.Domain;
 using KubeFood.Core.Helpers;
 using KubeFood.Core.Interfaces;
@@ -30,7 +28,7 @@ public class GetProductsByUuidsQueryHandler : IGetProductsByUuidsQueryHandler
             .Where(id => id != ObjectId.Empty)
             .ToList();
 
-        var products = 
+        var products =
             await _productRepository
                 .GetByIdsAsync(
                     ids,

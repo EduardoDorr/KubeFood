@@ -1,11 +1,7 @@
-﻿using Catalog.API.Application.Models;
-
-using KubeFood.Catalog.API.Domain;
+﻿using KubeFood.Catalog.API.Domain;
 using KubeFood.Core.Interfaces;
 using KubeFood.Core.Persistence.UnitOfWork;
 using KubeFood.Core.Results;
-
-using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace KubeFood.Catalog.API.Application.CreateProduct;
 

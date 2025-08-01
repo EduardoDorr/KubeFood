@@ -3,6 +3,6 @@
 namespace KubeFood.Order.API.Domain;
 
 public sealed record OrderRequested(
-    int OrderId,
+    Guid OrderUniqueId,
     List<string> OrderItemIds)
     : IDomainEvent;
