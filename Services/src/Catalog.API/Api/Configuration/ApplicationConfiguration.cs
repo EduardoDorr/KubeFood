@@ -2,6 +2,7 @@
 
 using KubeFood.Catalog.API.Api.Endpoints;
 using KubeFood.Catalog.API.Application;
+using KubeFood.Catalog.API.Domain;
 using KubeFood.Catalog.API.Infrastructure;
 using KubeFood.Catalog.API.Infrastructure.Persistence.Seeds;
 using KubeFood.Core.Swagger;
@@ -14,6 +15,7 @@ public static class ApplicationConfiguration
 {
     public static WebApplicationBuilder ConfigureApplicationServices(this WebApplicationBuilder builder)
     {
+        builder.Services.AddDomain(builder.Configuration);
         builder.Services.AddApplicationModule();
         builder.Services.AddInfrastructureModule(builder.Configuration);
 

@@ -1,8 +1,10 @@
 ﻿using System.Text.Json.Serialization;
 
+using KubeFood.Core;
 using KubeFood.Core.Swagger;
 using KubeFood.Order.API.Api.Endpoints;
 using KubeFood.Order.API.Application;
+using KubeFood.Order.API.Domain;
 using KubeFood.Order.API.Infrastructure;
 
 using Microsoft.AspNetCore.Http.Json;
@@ -15,6 +17,8 @@ public static class ApplicationConfiguration
 {
     public static WebApplicationBuilder ConfigureApplicationServices(this WebApplicationBuilder builder)
     {
+        builder.Services.AddMessageBusProducer();
+        builder.Services.AddDomain(builder.Configuration);
         builder.Services.AddApplicationModule();
         builder.Services.AddInfrastructureModule(builder.Configuration);
 

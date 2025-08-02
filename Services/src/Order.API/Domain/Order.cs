@@ -23,7 +23,7 @@ public class Order : BaseEntity
     public Order(
         int customerId,
         Address deliveryAddress,
-        List<string> itemIds,
+        List<(string, int)> items,
         PaymentType paymentType) : this()
     {
         CustomerId = customerId;
@@ -31,27 +31,9 @@ public class Order : BaseEntity
         Status = OrderStatus.Pending;
         PaymentType = paymentType;
 
-        AddDomainEvent(new OrderRequested(UniqueId, itemIds));
-    }
-
-    public Order(
-        int customerId,
-        Address deliveryAddress,
-        List<OrderItem> items,
-        OrderStatus status,
-        PaymentType paymentType) : this()
-    {
-        CustomerId = customerId;
-        DeliveryAddress = deliveryAddress;
-        Status = status;
-        PaymentType = paymentType;
-
-        AddItems(items);
-
-        AddDomainEvent(
-            new OrderRequested(
-                UniqueId,
-                items.Select(item => item.ProductId).ToList()));
+        AddDomainEvent(new OrderRequested(
+            UniqueId,
+            items.Select(i => new OrderRequestedItem(i.Item1, i.Item2)).ToList()));
     }
 
     public void AddItems(List<OrderItem> items)

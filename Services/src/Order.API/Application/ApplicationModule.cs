@@ -1,4 +1,7 @@
-﻿using KubeFood.Order.API.Application.CancelOrder;
+﻿using System.Reflection;
+
+using KubeFood.Core;
+using KubeFood.Order.API.Application.CancelOrder;
 using KubeFood.Order.API.Application.CreateOrder;
 using KubeFood.Order.API.Application.GetOrder;
 using KubeFood.Order.API.Application.GetOrders;
@@ -12,7 +15,8 @@ public static class ApplicationModule
     public static IServiceCollection AddApplicationModule(this IServiceCollection services)
     {
         services
-            .AddServices();
+            .AddServices()
+            .AddDomainEventHandlers();
 
         return services;
     }
@@ -25,6 +29,13 @@ public static class ApplicationModule
         services.AddScoped<ICreateOrderCommandHandler, CreateOrderCommandHandler>();
         services.AddScoped<IUpdateOrderCommandHandler, UpdateOrderCommandHandler>();
         services.AddScoped<ICancelOrderCommandHandler, CancelOrderCommandHandler>();
+
+        return services;
+    }
+
+    private static IServiceCollection AddDomainEventHandlers(this IServiceCollection services)
+    {
+        services.AddDomainEventHandlers(Assembly.GetExecutingAssembly());
 
         return services;
     }

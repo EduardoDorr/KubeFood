@@ -92,7 +92,6 @@ public static class HashIdHelper
             .Replace("-", "+")
             .Replace("_", "/");
 
-        // adicionar padding se necessário
         switch (base64.Length % 4)
         {
             case 2:

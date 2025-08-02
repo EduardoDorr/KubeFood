@@ -2,8 +2,6 @@
 using KubeFood.Core.Persistence.Outbox;
 using KubeFood.Order.API.Infrastructure.Persistence;
 
-using MediatR;
-
 using Microsoft.EntityFrameworkCore;
 
 using Newtonsoft.Json;
@@ -27,7 +25,7 @@ internal sealed class ProcessOutboxMessagesJob : BackgroundService
         {
             using var scope = _provider.CreateAsyncScope();
             var context = scope.ServiceProvider.GetRequiredService<OrderDbContext>();
-            var publisher = scope.ServiceProvider.GetRequiredService<IPublisher>();
+            var dispatcher = scope.ServiceProvider.GetRequiredService<IDomainEventDispatcher>();
 
             var outboxMessages = await context
                 .Set<OutboxMessage>()
@@ -52,13 +50,14 @@ internal sealed class ProcessOutboxMessagesJob : BackgroundService
                     continue;
                 }
 
-                await publisher.Publish(domainEvent, stoppingToken);
+                await dispatcher.DispatchAsync(domainEvent, stoppingToken);
 
                 outboxMessage.Processed = true;
                 outboxMessage.ProcessedAt = DateTime.Now;
             }
 
-            await context.SaveChangesAsync(stoppingToken);
+            if (outboxMessages.Count > 0)
+                await context.SaveChangesAsync(stoppingToken);
 
             await Task.Delay(TimeSpan.FromSeconds(60), stoppingToken);
         }

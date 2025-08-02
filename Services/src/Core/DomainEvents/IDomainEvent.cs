@@ -1,5 +1,3 @@
-﻿using MediatR;
+﻿namespace KubeFood.Core.DomainEvents;
 
-namespace KubeFood.Core.DomainEvents;
-
-public interface IDomainEvent : INotification { }
+public interface IDomainEvent { }

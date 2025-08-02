@@ -1,6 +1,9 @@
 ﻿using KubeFood.Catalog.API.Domain;
+using KubeFood.Catalog.API.Infrastructure.Consumer;
 using KubeFood.Catalog.API.Infrastructure.Persistence;
 using KubeFood.Catalog.API.Infrastructure.Persistence.Repositories;
+using KubeFood.Core;
+using KubeFood.Core.MessageBus;
 using KubeFood.Core.Persistence.UnitOfWork;
 
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +16,8 @@ public static class InfrastructureModule
     {
         services
             .AddDbContext(configuration)
-            .AddRepositories();
+            .AddRepositories()
+            .AddMessageBus();
 
         return services;
     }
@@ -30,6 +34,15 @@ public static class InfrastructureModule
     {
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IProductRepository, ProductRepository>();
+
+        return services;
+    }
+
+    private static IServiceCollection AddMessageBus(this IServiceCollection services)
+    {
+        services.AddMessageBusProducer();
+        services.AddHostedService<MessageBusConsumerService<OrderRequested>>();
+        services.AddScoped<IMessageBusConsumerService<OrderRequested>, OrderRequestedConsumer>();
 
         return services;
     }

@@ -24,7 +24,7 @@ internal sealed class PublishDomainEventsToOutBoxMessagesInterceptor : SaveChang
         return await base.SavingChangesAsync(eventData, result, cancellationToken);
     }
 
-    private async Task InsertOutBoxMessagesAsync(DbContext context)
+    private static async Task InsertOutBoxMessagesAsync(DbContext context)
     {
         var outboxMessages = context
             .ChangeTracker

@@ -5,9 +5,13 @@ namespace KubeFood.Order.API.Application.CreateOrder;
 
 public sealed record CreateOrderCommand(
     int CustomerId,
-    List<string> ItemIds,
+    List<CreateOrderItemCommand> Items,
     PaymentType PaymentType,
     AddressModel DeliveryAddress);
+
+public sealed record CreateOrderItemCommand(
+    string Id,
+    int Quantity);
 
 public static class CreateOrderCommandExtensions
 {
@@ -15,6 +19,6 @@ public static class CreateOrderCommandExtensions
         => new(
             command.CustomerId,
             command.DeliveryAddress.ToAddress(),
-            command.ItemIds,
+            command.Items.Select(i => (i.Id, i.Quantity)).ToList(),
             command.PaymentType);
 }

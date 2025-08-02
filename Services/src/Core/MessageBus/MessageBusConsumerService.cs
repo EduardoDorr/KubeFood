@@ -15,7 +15,7 @@ public class MessageBusConsumerService<T> : BackgroundService
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly ConnectionFactory _connectionFactory;
-    private readonly string _queue = typeof(T).Name.ToLowerInvariant();
+    private readonly string _queue = typeof(T).Name;
 
     public MessageBusConsumerService(IServiceProvider serviceProvider, IOptions<RabbitMqConfigurationOptions> rabbitMqConfigurationOptions)
     {
