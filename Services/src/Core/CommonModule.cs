@@ -34,4 +34,13 @@ public static class CommonModule
 
         return services;
     }
+
+    public static IServiceCollection AddMessageBusConsumer<TEvent, THandler>(this IServiceCollection services)
+        where THandler : class, IMessageBusConsumerServiceHandler<TEvent>
+    {
+        services.AddHostedService<MessageBusConsumerService<TEvent>>();
+        services.AddScoped<IMessageBusConsumerServiceHandler<TEvent>, THandler>();
+
+        return services;
+    }
 }

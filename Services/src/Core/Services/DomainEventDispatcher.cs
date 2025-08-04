@@ -56,12 +56,11 @@ public class DomainEventDispatcher : IDomainEventDispatcher
         var handlers = _serviceProvider
             .GetServices(typeof(IDomainEventHandler<>).MakeGenericType(eventType));
 
+        if (handlers is null)
+            return;
+
         foreach (var handler in handlers)
-        {
             foreach (var delegateHandler in _handlerCache[eventType])
-            {
-                await delegateHandler(handler, domainEvent, cancellationToken);
-            }
-        }
+                await delegateHandler(handler!, domainEvent, cancellationToken);
     }
 }

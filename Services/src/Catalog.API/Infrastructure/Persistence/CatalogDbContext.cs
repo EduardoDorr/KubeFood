@@ -1,4 +1,5 @@
-﻿using KubeFood.Catalog.API.Domain;
+﻿using KubeFood.Catalog.API.Application.ProcessedEvents;
+using KubeFood.Catalog.API.Domain;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -7,6 +8,7 @@ namespace KubeFood.Catalog.API.Infrastructure.Persistence;
 public class CatalogDbContext : DbContext
 {
     public DbSet<Product> Products { get; set; }
+    public DbSet<ProcessedEvent> ProcessedEvents { get; set; }
 
     public CatalogDbContext(DbContextOptions<CatalogDbContext> options)
         : base(options) { }

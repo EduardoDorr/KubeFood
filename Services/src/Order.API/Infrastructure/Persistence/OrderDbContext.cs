@@ -1,5 +1,5 @@
 ﻿using KubeFood.Core.Persistence.Configurations;
-using KubeFood.Core.Persistence.Outbox;
+using KubeFood.Core.Persistence.OutboxInbox;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -9,7 +9,9 @@ public class OrderDbContext : DbContext
 {
     public DbSet<Domain.Order> Orders { get; set; }
     public DbSet<Domain.OrderItem> OrderItems { get; set; }
-    public DbSet<OutboxMessage> OutboxMessages { get; set; }
+    public DbSet<Domain.OrderStatusHistory> OrderStatusHistories { get; set; }
+    public DbSet<InboxMessage<int>> InboxMessages { get; set; }
+    public DbSet<OutboxMessage<int>> OutboxMessages { get; set; }
 
     public OrderDbContext(DbContextOptions<OrderDbContext> options)
         : base(options) { }
@@ -17,7 +19,8 @@ public class OrderDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        modelBuilder.ApplyConfiguration(new OutboxMessageConfiguration());
+        modelBuilder.ApplyConfiguration(new InboxMessageConfiguration<int>());
+        modelBuilder.ApplyConfiguration(new OutboxMessageConfiguration<int>());
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(OrderDbContext).Assembly);
     }
 }

@@ -2,10 +2,9 @@
 
 namespace KubeFood.Core.Persistence.Repositories;
 
-public interface IGenericRepository<TEntity>
-    : IReadableRepository<TEntity>,
-      ICreatableRepository<TEntity>,
-      IUpdatableRepository<TEntity>,
-      IDeletableRepository<TEntity> where TEntity : BaseEntity
-{
-}
+public interface IGenericRepository<TEntity, TId>
+    : IReadableRepository<TEntity, TId>,
+      ICreatableRepository<TEntity, TId>,
+      IUpdatableRepository<TEntity, TId>,
+      IDeletableRepository<TEntity, TId> where TEntity : BaseEntity<TId>
+{ }

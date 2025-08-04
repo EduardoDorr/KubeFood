@@ -1,8 +1,8 @@
-﻿namespace KubeFood.Core.Persistence.Outbox;
+﻿namespace KubeFood.Core.Persistence.OutboxInbox;
 
-public sealed class OutboxMessage
+public sealed class InboxMessage<TId>
 {
-    public Guid Id { get; set; }
+    public TId Id { get; set; }
     public string Type { get; set; } = string.Empty;
     public string Content { get; set; } = string.Empty;
     public bool Processed { get; set; } = false;

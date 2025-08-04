@@ -1,7 +1,9 @@
-﻿using KubeFood.Core.Persistence.UnitOfWork;
+﻿using KubeFood.Core;
+using KubeFood.Core.Persistence.Interceptors;
+using KubeFood.Core.Persistence.UnitOfWork;
+using KubeFood.Order.API.Application.OrderSaga.OrderValidated;
 using KubeFood.Order.API.Domain;
 using KubeFood.Order.API.Infrastructure.BackgroundJobs;
-using KubeFood.Order.API.Infrastructure.Interceptors;
 using KubeFood.Order.API.Infrastructure.Persistence;
 using KubeFood.Order.API.Infrastructure.Persistence.Repositories;
 
@@ -16,7 +18,8 @@ public static class InfrastructureModule
         services
             .AddDbContext(configuration)
             .AddRepositories()
-            .AddBackgroundJobs();
+            .AddBackgroundJobs()
+            .AddMessageBus();
 
         return services;
     }
@@ -26,7 +29,7 @@ public static class InfrastructureModule
         services.AddDbContext<OrderDbContext>(options =>
             options.UseMySQL(
                 configuration.GetConnectionString("CatalogDbConnection"))
-            .AddInterceptors(new PublishDomainEventsToOutBoxMessagesInterceptor()));
+            .AddInterceptors(new PublishDomainEventsToOutBoxMessagesInterceptor<int>()));
 
         return services;
     }
@@ -42,6 +45,14 @@ public static class InfrastructureModule
     private static IServiceCollection AddBackgroundJobs(this IServiceCollection services)
     {
         services.AddHostedService<ProcessOutboxMessagesJob>();
+
+        return services;
+    }
+
+    private static IServiceCollection AddMessageBus(this IServiceCollection services)
+    {
+        services.AddMessageBusProducer()
+                .AddMessageBusConsumer<OrderValidatedEvent, OrderValidatedEventHandler>();
 
         return services;
     }

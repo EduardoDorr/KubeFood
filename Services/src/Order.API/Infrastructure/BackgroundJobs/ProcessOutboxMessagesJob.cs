@@ -1,5 +1,5 @@
 ﻿using KubeFood.Core.DomainEvents;
-using KubeFood.Core.Persistence.Outbox;
+using KubeFood.Core.Persistence.OutboxInbox;
 using KubeFood.Order.API.Infrastructure.Persistence;
 
 using Microsoft.EntityFrameworkCore;
@@ -28,7 +28,7 @@ internal sealed class ProcessOutboxMessagesJob : BackgroundService
             var dispatcher = scope.ServiceProvider.GetRequiredService<IDomainEventDispatcher>();
 
             var outboxMessages = await context
-                .Set<OutboxMessage>()
+                .Set<OutboxMessage<int>>()
                 .Where(om => !om.Processed)
                 .Take(20)
                 .ToListAsync(stoppingToken);

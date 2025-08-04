@@ -6,7 +6,7 @@ using MongoDB.Bson;
 
 namespace KubeFood.Catalog.API.Domain;
 
-public sealed class Product : BaseMongoEntity
+public sealed class Product : BaseEntity<ObjectId>
 {
     public string? Uuid { get; private set; }
     public string Name { get; private set; }

@@ -2,7 +2,7 @@
 
 namespace KubeFood.Core.Persistence.Repositories;
 
-public interface ICreatableRepository<in TEntity> where TEntity : BaseEntity
+public interface ICreatableRepository<in TEntity, TId> where TEntity : BaseEntity<TId>
 {
     void Create(TEntity entity);
 }

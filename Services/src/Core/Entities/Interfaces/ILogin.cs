@@ -1,6 +1,6 @@
 ﻿using KubeFood.Core.ValueObjects;
 
-namespace KubeFood.Core.Entities;
+namespace KubeFood.Core.Entities.Interfaces;
 
 public interface ILogin
 {

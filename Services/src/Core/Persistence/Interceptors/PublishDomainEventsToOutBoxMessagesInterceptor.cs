@@ -1,14 +1,14 @@
 ﻿using KubeFood.Core.Entities;
-using KubeFood.Core.Persistence.Outbox;
+using KubeFood.Core.Persistence.OutboxInbox;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
 using Newtonsoft.Json;
 
-namespace KubeFood.Order.API.Infrastructure.Interceptors;
+namespace KubeFood.Core.Persistence.Interceptors;
 
-internal sealed class PublishDomainEventsToOutBoxMessagesInterceptor : SaveChangesInterceptor
+public sealed class PublishDomainEventsToOutBoxMessagesInterceptor<TId> : SaveChangesInterceptor
 {
     public override async ValueTask<InterceptionResult<int>> SavingChangesAsync(
         DbContextEventData eventData,
@@ -38,9 +38,8 @@ internal sealed class PublishDomainEventsToOutBoxMessagesInterceptor : SaveChang
 
                 return domainEvents;
             })
-            .Select(domainEvent => new OutboxMessage
+            .Select(static domainEvent => new OutboxMessage<TId>
             {
-                Id = Guid.NewGuid(),
                 CreatedAt = DateTime.Now,
                 Type = domainEvent.GetType().Name,
                 Content = JsonConvert.SerializeObject(
@@ -52,6 +51,6 @@ internal sealed class PublishDomainEventsToOutBoxMessagesInterceptor : SaveChang
             })
             .ToList();
 
-        await context.Set<OutboxMessage>().AddRangeAsync(outboxMessages);
+        await context.Set<OutboxMessage<TId>>().AddRangeAsync(outboxMessages);
     }
 }

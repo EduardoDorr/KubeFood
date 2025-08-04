@@ -4,7 +4,7 @@ using KubeFood.Core.Entities;
 
 namespace KubeFood.Core.Persistence.Configurations;
 
-public abstract class BaseEntityConfiguration<TBase> : IEntityTypeConfiguration<TBase> where TBase : BaseEntity
+public abstract class BaseEntityConfiguration<TBase, TId> : IEntityTypeConfiguration<TBase> where TBase : BaseEntity<TId>
 {
     public virtual void Configure(EntityTypeBuilder<TBase> builder)
     {

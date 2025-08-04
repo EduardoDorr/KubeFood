@@ -2,7 +2,7 @@
 
 namespace KubeFood.Order.API.Domain;
 
-public class OrderItem : BaseEntity
+public class OrderItem : BaseEntity<int>
 {
     public int OrderId { get; private set; }
     public string ProductId { get; private set; }

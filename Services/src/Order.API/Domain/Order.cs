@@ -1,9 +1,10 @@
 ﻿using KubeFood.Core.Entities;
 using KubeFood.Core.ValueObjects;
+using KubeFood.Order.API.Domain.Events;
 
 namespace KubeFood.Order.API.Domain;
 
-public class Order : BaseEntity
+public class Order : BaseEntity<int>
 {
     public Guid UniqueId { get; private set; }
     public int CustomerId { get; private set; }
@@ -14,6 +15,8 @@ public class Order : BaseEntity
     public string? TrackingCode { get; private set; }
     public string? FailureReason { get; private set; }
     public decimal TotalPrice => Items.Sum(item => item.TotalPrice);
+
+    public virtual List<OrderStatusHistory> StatusHistory { get; private set; } = [];
 
     protected Order()
     {
@@ -30,10 +33,13 @@ public class Order : BaseEntity
         DeliveryAddress = deliveryAddress;
         Status = OrderStatus.Pending;
         PaymentType = paymentType;
+        StatusHistory.Add(new(
+            Id,
+            OrderStatus.Pending));
 
-        AddDomainEvent(new OrderRequested(
+        AddDomainEvent(new OrderRequestedEvent(
             UniqueId,
-            items.Select(i => new OrderRequestedItem(i.Item1, i.Item2)).ToList()));
+            items.Select(i => new OrderRequestedItemEvent(i.Item1, i.Item2)).ToList()));
     }
 
     public void AddItems(List<OrderItem> items)

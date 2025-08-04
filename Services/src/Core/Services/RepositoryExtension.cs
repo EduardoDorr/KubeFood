@@ -7,10 +7,10 @@ namespace KubeFood.Core.Services;
 
 public static class RepositoryExtension
 {
-    public static async Task<Result<List<T>>> GetEntitiesByIdAsync<T>(
-        IReadableRepository<T> repository,
-        IList<int>? entitiesId,
-        CancellationToken cancellationToken) where T : BaseEntity
+    public static async Task<Result<List<T>>> GetEntitiesByIdAsync<T, TId>(
+        IReadableRepository<T, TId> repository,
+        IList<TId>? entitiesId,
+        CancellationToken cancellationToken) where T : BaseEntity<TId>
     {
         if (entitiesId is null || entitiesId.Count == 0)
             return Result.Ok(new List<T>());

@@ -4,8 +4,7 @@ namespace KubeFood.Core.Entities;
 
 public abstract class BaseEntity
 {
-    public int Id { get; }
-    public DateTime CreatedAt { get; }
+    public DateTime CreatedAt { get; private set; }
     public DateTime UpdatedAt { get; protected set; }
     public bool IsActive { get; protected set; }
 
@@ -36,4 +35,9 @@ public abstract class BaseEntity
 
     protected void AddDomainEvent(IDomainEvent domainEvent)
         => _domainEvents.Add(domainEvent);
+}
+
+public abstract class BaseEntity<TId> : BaseEntity
+{
+    public TId Id { get; }    
 }

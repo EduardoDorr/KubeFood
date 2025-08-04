@@ -3,20 +3,23 @@
 public enum OrderStatus
 {
     Pending = 0,
-    ProductValidationFailed = 1,
-    StockUnavailable = 2,
+    ProductsValidated = 1,
+    ProductsInvalid = 2,
 
-    PaymentPending = 3,
-    PaymentFailed = 4,
-    PaymentConfirmed = 5,
+    StockAvailable = 3,
+    StockUnavailable = 4,
 
-    InPreparation = 6,
-    ReadyForDelivery = 7,
-    Delivered = 8,
-    Completed = 9,
+    PaymentPending = 5,
+    PaymentFailed = 6,
+    PaymentConfirmed = 7,
 
-    CanceledByCustomer = 10,
-    CanceledByRestaurant = 11,
-    Expired = 12,
-    Failed = 13,
+    InPreparation = 8,
+    ReadyForDelivery = 9,
+    Delivered = 10,
+    Completed = 11,
+
+    CanceledByCustomer = 12,
+    CanceledByRestaurant = 13,
+    Expired = 14,
+    Failed = 15,
 }

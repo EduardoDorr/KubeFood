@@ -23,6 +23,11 @@ public static class HashIdHelper
         return _hashids.Encode(id);
     }
 
+    /// <summary>
+    /// Encode a hash Id from a given ObjectId.
+    /// </summary>
+    /// <param name="id">The ObjectId to hash.</param>
+    /// <returns>A string representing the hashed Id.</returns>
     public static string EncodeId(this ObjectId id)
     {
         var bytes = id.ToByteArray();
@@ -34,9 +39,9 @@ public static class HashIdHelper
     }
 
     /// <summary>
-    /// Encode a hash Id from a given integer Id.
+    /// Encode a hash Id from a given string Id.
     /// </summary>
-    /// <param name="id">The integer Id to hash.</param>
+    /// <param name="id">The string Id to hash.</param>
     /// <returns>A string representing the hashed Id.</returns>
     public static string EncodeId(this string id)
     {
@@ -67,8 +72,8 @@ public static class HashIdHelper
     /// <summary>
     /// Decode an integer Id from a given hash Id.
     /// </summary>
-    /// <param name="hashId">The sting hashed Id to decode to an integer.</param>
-    /// <returns>A integer Id.</returns>
+    /// <param name="hashId">The sting hashed Id to decode to an string.</param>
+    /// <returns>A string Id.</returns>
     public static string DecodeStringId(this string hashId)
     {
         var numbers = _hashids.Decode(hashId).FirstOrDefault();
@@ -86,6 +91,11 @@ public static class HashIdHelper
         return decodedId;
     }
 
+    /// <summary>
+    /// Decode an string Id from a given hash Id.
+    /// </summary>
+    /// <param name="hashId">The string hashed Id to decode to an ObjectId.</param>
+    /// <returns>A ObjectId.</returns>
     public static ObjectId DecodeObjectId(this string hashId)
     {
         var base64 = hashId

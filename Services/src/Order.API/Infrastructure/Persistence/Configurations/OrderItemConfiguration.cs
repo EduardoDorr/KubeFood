@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace KubeFood.Order.API.Infrastructure.Persistence.Configurations;
 
-internal class OrderItemConfiguration : BaseEntityConfiguration<Domain.OrderItem>
+internal class OrderItemConfiguration : BaseEntityConfiguration<Domain.OrderItem, int>
 {
     public override void Configure(EntityTypeBuilder<Domain.OrderItem> builder)
     {

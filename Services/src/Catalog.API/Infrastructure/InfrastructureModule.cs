@@ -1,5 +1,5 @@
-﻿using KubeFood.Catalog.API.Domain;
-using KubeFood.Catalog.API.Infrastructure.Consumer;
+﻿using KubeFood.Catalog.API.Application.ValidateProducts;
+using KubeFood.Catalog.API.Domain;
 using KubeFood.Catalog.API.Infrastructure.Persistence;
 using KubeFood.Catalog.API.Infrastructure.Persistence.Repositories;
 using KubeFood.Core;
@@ -14,10 +14,9 @@ public static class InfrastructureModule
 {
     public static IServiceCollection AddInfrastructureModule(this IServiceCollection services, IConfiguration configuration)
     {
-        services
-            .AddDbContext(configuration)
-            .AddRepositories()
-            .AddMessageBus();
+        services.AddDbContext(configuration)
+                .AddRepositories()
+                .AddMessageBus();
 
         return services;
     }
@@ -32,17 +31,16 @@ public static class InfrastructureModule
 
     private static IServiceCollection AddRepositories(this IServiceCollection services)
     {
-        services.AddScoped<IUnitOfWork, UnitOfWork>();
-        services.AddScoped<IProductRepository, ProductRepository>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>()
+                .AddScoped<IProductRepository, ProductRepository>();
 
         return services;
     }
 
     private static IServiceCollection AddMessageBus(this IServiceCollection services)
     {
-        services.AddMessageBusProducer();
-        services.AddHostedService<MessageBusConsumerService<OrderRequested>>();
-        services.AddScoped<IMessageBusConsumerService<OrderRequested>, OrderRequestedConsumer>();
+        services.AddMessageBusProducer()
+                .AddMessageBusConsumer<OrderRequestedEvent, OrderRequestedEventHandler>();
 
         return services;
     }

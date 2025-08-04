@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace KubeFood.Order.API.Infrastructure.Persistence.Configurations;
 
-internal class OrderConfiguration : BaseEntityConfiguration<Domain.Order>
+internal class OrderConfiguration : BaseEntityConfiguration<Domain.Order, int>
 {
     public override void Configure(EntityTypeBuilder<Domain.Order> builder)
     {
@@ -53,6 +53,11 @@ internal class OrderConfiguration : BaseEntityConfiguration<Domain.Order>
             });
 
         builder.HasMany(o => o.Items)
+               .WithOne(i => i.Order)
+               .HasForeignKey(i => i.OrderId)
+               .IsRequired();
+
+        builder.HasMany(o => o.StatusHistory)
                .WithOne(i => i.Order)
                .HasForeignKey(i => i.OrderId)
                .IsRequired();

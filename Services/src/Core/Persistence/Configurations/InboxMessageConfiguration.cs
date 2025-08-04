@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace KubeFood.Core.Persistence.Configurations;
 
-public class OutboxMessageConfiguration<TId> : IEntityTypeConfiguration<OutboxMessage<TId>>
+public class InboxMessageConfiguration<TId> : IEntityTypeConfiguration<InboxMessage<TId>>
 {
-    public virtual void Configure(EntityTypeBuilder<OutboxMessage<TId>> builder)
+    public virtual void Configure(EntityTypeBuilder<InboxMessage<TId>> builder)
     {
         builder.HasKey(b => b.Id);
 

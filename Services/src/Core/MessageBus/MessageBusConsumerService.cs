@@ -54,15 +54,20 @@ public class MessageBusConsumerService<T> : BackgroundService
             var message = JsonSerializer.Deserialize<T>(json);
 
             using var scope = _serviceProvider.CreateAsyncScope();
-            var handler = scope.ServiceProvider.GetRequiredService<IMessageBusConsumerService<T>>();
+            var handler = scope.ServiceProvider.GetRequiredService<IMessageBusConsumerServiceHandler<T>>();
 
-            await handler.ConsumeAsync(message, stoppingToken);
+            var result = await handler.ConsumeAsync(message, stoppingToken);
+
+            if (result == MessageBusConsumerResult.Ack)
+                await channel.BasicAckAsync(ea.DeliveryTag, false, stoppingToken);
+            else
+                await channel.BasicNackAsync(ea.DeliveryTag, false, requeue: true, stoppingToken);
         };
 
         await channel.BasicConsumeAsync
             (
                 queue: _queue,
-                autoAck: true,
+                autoAck: false,
                 consumer: consumer,
                 cancellationToken: stoppingToken
             );
