@@ -33,7 +33,7 @@ public abstract class BaseEntity
     public void ClearDomainEvents()
         => _domainEvents.Clear();
 
-    protected void AddDomainEvent(IDomainEvent domainEvent)
+    public void AddDomainEvent(IDomainEvent domainEvent)
         => _domainEvents.Add(domainEvent);
 }
 

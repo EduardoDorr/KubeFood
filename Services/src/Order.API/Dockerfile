@@ -6,25 +6,24 @@ WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
 
-
 # Esta fase é usada para compilar o projeto de serviço
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["./Catalog.API/KubeFood.Catalog.API.csproj", "Catalog.API/"]
+COPY ["./Order.API/KubeFood.Order.API.csproj", "Order.API/"]
 COPY ["./Core/KubeFood.Core.csproj", "Core/"]
-RUN dotnet restore "./Catalog.API/KubeFood.Catalog.API.csproj"
+RUN dotnet restore "./Order.API/KubeFood.Order.API.csproj"
 COPY . .
-WORKDIR "/src/Catalog.API"
-RUN dotnet build "./KubeFood.Catalog.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/Order.API"
+RUN dotnet build "./KubeFood.Order.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # Esta fase é usada para publicar o projeto de serviço a ser copiado para a fase final
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./KubeFood.Catalog.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./KubeFood.Order.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # Esta fase é usada na produção ou quando executada no VS no modo normal (padrão quando não está usando a configuração de Depuração)
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "KubeFood.Catalog.API.dll"]
+ENTRYPOINT ["dotnet", "KubeFood.Order.API.dll"]

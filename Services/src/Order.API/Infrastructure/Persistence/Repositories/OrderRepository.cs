@@ -38,6 +38,12 @@ public class OrderRepository : IOrderRepository
             .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
     }
 
+    public async Task<Domain.Order?> GetByUniqueIdAsync(Guid uniqueId, CancellationToken cancellationToken = default)
+    {
+        return await _context.Orders
+            .FirstOrDefaultAsync(p => p.UniqueId == uniqueId, cancellationToken);
+    }
+
     public void Create(Domain.Order order)
     {
         _context.Orders.Add(order);

@@ -21,48 +21,52 @@ public class OrderRequestedEventHandler : MessageBusConsumerServiceHandlerBase<O
 
     protected async override Task<MessageBusConsumerResult> ExecuteAsync(OrderRequestedEvent message, CancellationToken cancellationToken = default)
     {
+        OrderValidatedEvent orderValidatedEvent;
+
         var objectIds = message.OrderItems.Select(o => o.Id.DecodeObjectId());
 
         if (objectIds is null)
         {
-            var orderInvalid =
+            orderValidatedEvent =
                 new OrderValidatedEvent(
                     message!.OrderUniqueId,
                     false,
                     [],
                     message.OrderItems.Select(o => o.Id).ToList());
-
-            await _messageBusProducerService
-                .PublishAsync(nameof(OrderValidatedEvent), orderInvalid, cancellationToken);
-
-            return MessageBusConsumerResult.Ack;
         }
-
-        var products = await _productRepository
-            .GetByIdsAsync(objectIds!, cancellationToken);
-
-        if (objectIds!.Count() > products.Count())
+        else
         {
-            var orderInvalid =
-                new OrderValidatedEvent(
-                    message!.OrderUniqueId,
-                    false,
-                    [],
-                    message.OrderItems.Select(o => o.Id).ToList());
+            var products = await _productRepository
+                .GetByIdsAsync(objectIds!, cancellationToken);
 
-            await _messageBusProducerService
-                .PublishAsync(nameof(OrderValidatedEvent), orderInvalid, cancellationToken);
+            var orderItems = products
+                .ToOrderItem(message.OrderItems);
+
+            if (objectIds!.Count() > products.Count())
+            {
+                var invalidItems = message.OrderItems
+                    .Where(oi => products.All(p => p.Id != oi.Id.DecodeObjectId()))
+                    .ToList();
+
+                orderValidatedEvent =
+                    new OrderValidatedEvent(
+                        message!.OrderUniqueId,
+                        false,
+                        orderItems,
+                        invalidItems.Select(i => i.Id).ToList());
+            }
+            else
+            {
+                orderValidatedEvent =
+                    new OrderValidatedEvent(
+                        message.OrderUniqueId,
+                        true,
+                        orderItems);
+            }
         }
-
-        var orderItems = products.ToOrderItem(message.OrderItems);
-        var orderValidated =
-            new OrderValidatedEvent(
-                message.OrderUniqueId,
-                true,
-                orderItems);
 
         await _messageBusProducerService
-            .PublishAsync(nameof(OrderValidatedEvent), orderValidated, cancellationToken);
+            .PublishAsync(nameof(OrderValidatedEvent), orderValidatedEvent, cancellationToken);
 
         return MessageBusConsumerResult.Ack;
     }

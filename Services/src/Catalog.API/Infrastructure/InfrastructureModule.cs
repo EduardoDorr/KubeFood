@@ -3,7 +3,6 @@ using KubeFood.Catalog.API.Domain;
 using KubeFood.Catalog.API.Infrastructure.Persistence;
 using KubeFood.Catalog.API.Infrastructure.Persistence.Repositories;
 using KubeFood.Core;
-using KubeFood.Core.MessageBus;
 using KubeFood.Core.Persistence.UnitOfWork;
 
 using Microsoft.EntityFrameworkCore;

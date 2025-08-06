@@ -51,6 +51,8 @@ public static class ApplicationConfiguration
         app.UseHttpsRedirection();
         app.MapOrderEndpoints();
 
+        await app.EnsureMigrationsAsync();
+
         await app.RunAsync();
     }
 }

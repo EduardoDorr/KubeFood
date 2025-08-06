@@ -24,11 +24,20 @@ public static class InfrastructureModule
         return services;
     }
 
+    public static async Task<WebApplication> EnsureMigrationsAsync(this WebApplication app)
+    {
+        using var scope = app.Services.CreateAsyncScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<OrderDbContext>();
+        await dbContext.Database.MigrateAsync();
+
+        return app;
+    }
+
     private static IServiceCollection AddDbContext(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<OrderDbContext>(options =>
             options.UseMySQL(
-                configuration.GetConnectionString("CatalogDbConnection"))
+                configuration.GetConnectionString("OrderDbConnection"))
             .AddInterceptors(new PublishDomainEventsToOutBoxMessagesInterceptor<int>()));
 
         return services;

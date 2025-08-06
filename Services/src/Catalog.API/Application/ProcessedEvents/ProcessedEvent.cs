@@ -4,7 +4,6 @@ namespace KubeFood.Catalog.API.Application.ProcessedEvents;
 
 public sealed class ProcessedEvent
 {
-
     public ObjectId Id { get; private set; }
     public string EventId { get; private set; }
     public string EventType { get; private set; }
