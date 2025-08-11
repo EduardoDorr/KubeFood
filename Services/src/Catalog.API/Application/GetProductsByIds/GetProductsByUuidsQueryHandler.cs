@@ -2,7 +2,7 @@
 using KubeFood.Catalog.API.Domain;
 using KubeFood.Core.Helpers;
 using KubeFood.Core.Interfaces;
-using KubeFood.Core.Results;
+using KubeFood.Core.Results.Base;
 
 using MongoDB.Bson;
 
@@ -24,7 +24,7 @@ public class GetProductsByUuidsQueryHandler : IGetProductsByUuidsQueryHandler
     public async Task<Result<IEnumerable<ProductViewModel>>> HandleAsync(GetProductsByUuidsQuery request, CancellationToken cancellationToken = default)
     {
         var ids = request.ProductUuids
-            .Select(HashIdHelper.DecodeObjectId)
+            .Select(HashIdHelper.DecodeHashId<ObjectId>)
             .Where(id => id != ObjectId.Empty)
             .ToList();
 

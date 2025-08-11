@@ -1,31 +1,8 @@
-﻿using KubeFood.Core.Persistence.OutboxInbox;
-
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using KubeFood.Core.Persistence.BoxMessages;
 
 namespace KubeFood.Core.Persistence.Configurations;
 
-public class InboxMessageConfiguration<TId> : IEntityTypeConfiguration<InboxMessage<TId>>
+public class InboxMessageConfiguration<TId>
+    : BaseBoxMessageConfiguration<InboxMessage<TId>, TId>
 {
-    public virtual void Configure(EntityTypeBuilder<InboxMessage<TId>> builder)
-    {
-        builder.HasKey(b => b.Id);
-
-        builder.Property(p => p.Type)
-               .HasMaxLength(100)
-               .IsRequired();
-
-        builder.Property(p => p.Processed)
-               .IsRequired();
-
-        builder.HasIndex(p => p.Processed);
-
-        builder.Property(p => p.Error)
-               .HasMaxLength(500);
-
-        builder.Property(b => b.CreatedAt)
-               .IsRequired();
-
-        builder.Property(b => b.ProcessedAt);
-    }
 }

@@ -1,5 +1,5 @@
 ﻿using KubeFood.Core.Interfaces;
-using KubeFood.Core.Results;
+using KubeFood.Core.Results.Base;
 using KubeFood.Order.API.Application.Models;
 using KubeFood.Order.API.Domain;
 

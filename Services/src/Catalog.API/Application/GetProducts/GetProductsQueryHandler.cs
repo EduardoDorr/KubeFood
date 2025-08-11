@@ -2,7 +2,7 @@
 using KubeFood.Catalog.API.Domain;
 using KubeFood.Core.Interfaces;
 using KubeFood.Core.Models.Pagination;
-using KubeFood.Core.Results;
+using KubeFood.Core.Results.Base;
 
 namespace KubeFood.Catalog.API.Application.GetProducts;
 

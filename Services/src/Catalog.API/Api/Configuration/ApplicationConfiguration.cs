@@ -5,6 +5,7 @@ using KubeFood.Catalog.API.Application;
 using KubeFood.Catalog.API.Domain;
 using KubeFood.Catalog.API.Infrastructure;
 using KubeFood.Catalog.API.Infrastructure.Persistence.Seeds;
+using KubeFood.Core.Middlewares;
 using KubeFood.Core.Swagger;
 
 using Microsoft.AspNetCore.Http.Json;
@@ -36,7 +37,6 @@ public static class ApplicationConfiguration
 
     public static async Task ConfigureApplicationPipeline(this WebApplication app)
     {
-        // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();

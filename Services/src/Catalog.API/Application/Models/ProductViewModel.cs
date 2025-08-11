@@ -1,9 +1,10 @@
 ﻿using KubeFood.Catalog.API.Domain;
+using KubeFood.Core.Helpers;
 
 namespace KubeFood.Catalog.API.Application.Models;
 
 public sealed record ProductViewModel(
-    string Uuid,
+    string Id,
     string Name,
     string? Description,
     ProductCategory Category,
@@ -17,7 +18,7 @@ public static class ProductViewModelExtensions
         => product is null
             ? null
             :new(
-                product.Uuid,
+                product.Id.EncodeId(),
                 product.Name,
                 product.Description,
                 product.Category,

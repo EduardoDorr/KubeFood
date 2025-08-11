@@ -1,11 +1,11 @@
-﻿using KubeFood.Core.MessageBus;
+﻿using KubeFood.Core.Events;
 using KubeFood.Core.Persistence.UnitOfWork;
 using KubeFood.Order.API.Domain;
 using KubeFood.Order.API.Domain.Events;
 
 namespace KubeFood.Order.API.Application.OrderSaga.OrderValidated;
 
-public class OrderValidatedEventHandler : MessageBusConsumerServiceHandlerBase<OrderValidatedEvent>
+public class OrderValidatedEventHandler : EventHandlerBase<OrderValidatedEvent>
 {
     private readonly IOrderRepository _orderRepository;
     private readonly IUnitOfWork _unitOfWork;
@@ -20,7 +20,7 @@ public class OrderValidatedEventHandler : MessageBusConsumerServiceHandlerBase<O
         _unitOfWork = unitOfWork;
     }
 
-    protected async override Task<MessageBusConsumerResult> ExecuteAsync(OrderValidatedEvent message, CancellationToken cancellationToken = default)
+    protected override async Task ExecuteAsync(OrderValidatedEvent message, CancellationToken cancellationToken = default)
     {
         var order = await _orderRepository
             .GetByUniqueIdAsync(message.OrderUniqueId, cancellationToken);
@@ -28,7 +28,7 @@ public class OrderValidatedEventHandler : MessageBusConsumerServiceHandlerBase<O
         if (order is null)
         {
             _logger.LogError("Order with ID {OrderId} not found.", message.OrderUniqueId);
-            return MessageBusConsumerResult.Ack;
+            return;
         }
 
         if (message.Valid)
@@ -58,7 +58,5 @@ public class OrderValidatedEventHandler : MessageBusConsumerServiceHandlerBase<O
 
         _orderRepository.Update(order);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-        return MessageBusConsumerResult.Ack;
     }
 }

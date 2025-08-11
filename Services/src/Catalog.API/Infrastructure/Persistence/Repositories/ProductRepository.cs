@@ -1,5 +1,4 @@
 ﻿using KubeFood.Catalog.API.Domain;
-using KubeFood.Catalog.API.Infrastructure.Persistence;
 using KubeFood.Core.Models.Pagination;
 
 using Microsoft.EntityFrameworkCore;
@@ -41,18 +40,18 @@ public class ProductRepository : IProductRepository
             .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
     }
 
-    public void Create(Product entity)
+    public void Create(Product product)
     {
-        _context.Products.Add(entity);
+        _context.Products.Add(product);
     }
 
-    public void Update(Product entity)
+    public void Update(Product product)
     {
-        _context.Products.Update(entity);
+        _context.Products.Update(product);
     }
 
-    public void Delete(Product entity)
+    public void Delete(Product product)
     {
-        _context.Products.Remove(entity);
+        _context.Products.Remove(product);
     }
 }

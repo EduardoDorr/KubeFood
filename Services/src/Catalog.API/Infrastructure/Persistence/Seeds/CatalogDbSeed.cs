@@ -68,13 +68,8 @@ public static class CatalogDbSeed
         };
 
         foreach (var product in products)
-        {
-            context.Products.Add(product);
-            await context.SaveChangesAsync();
+            await context.Products.AddAsync(product);
 
-            product.SetUuid(product.Id);
-            context.Products.Update(product);
-            await context.SaveChangesAsync();
-        }
+        await context.SaveChangesAsync();
     }
 }

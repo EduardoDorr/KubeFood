@@ -1,10 +1,13 @@
 ﻿using KubeFood.Catalog.API.Domain;
+using KubeFood.Core.Events;
 using KubeFood.Core.Helpers;
 using KubeFood.Core.MessageBus;
 
+using MongoDB.Bson;
+
 namespace KubeFood.Catalog.API.Application.ValidateProducts;
 
-public class OrderRequestedEventHandler : MessageBusConsumerServiceHandlerBase<OrderRequestedEvent>
+public class OrderRequestedEventHandler : EventHandlerBase<OrderRequestedEvent>
 {
     private readonly IProductRepository _productRepository;
     private readonly IMessageBusProducerService _messageBusProducerService;
@@ -19,20 +22,22 @@ public class OrderRequestedEventHandler : MessageBusConsumerServiceHandlerBase<O
         _messageBusProducerService = messageBusProducerService;
     }
 
-    protected async override Task<MessageBusConsumerResult> ExecuteAsync(OrderRequestedEvent message, CancellationToken cancellationToken = default)
+    protected override async Task ExecuteAsync(OrderRequestedEvent @event, CancellationToken cancellationToken = default)
     {
         OrderValidatedEvent orderValidatedEvent;
 
-        var objectIds = message.OrderItems.Select(o => o.Id.DecodeObjectId());
+        var objectIds = @event
+            .OrderItems
+            .Select(o => o.Id.DecodeHashId<ObjectId>());
 
         if (objectIds is null)
         {
             orderValidatedEvent =
                 new OrderValidatedEvent(
-                    message!.OrderUniqueId,
+                    @event!.OrderUniqueId,
                     false,
                     [],
-                    message.OrderItems.Select(o => o.Id).ToList());
+                    @event.OrderItems.Select(o => o.Id).ToList());
         }
         else
         {
@@ -40,17 +45,17 @@ public class OrderRequestedEventHandler : MessageBusConsumerServiceHandlerBase<O
                 .GetByIdsAsync(objectIds!, cancellationToken);
 
             var orderItems = products
-                .ToOrderItem(message.OrderItems);
+                .ToOrderItem(@event.OrderItems);
 
             if (objectIds!.Count() > products.Count())
             {
-                var invalidItems = message.OrderItems
-                    .Where(oi => products.All(p => p.Id != oi.Id.DecodeObjectId()))
+                var invalidItems = @event.OrderItems
+                    .Where(oi => products.All(p => p.Id != oi.Id.DecodeHashId<ObjectId>()))
                     .ToList();
 
                 orderValidatedEvent =
                     new OrderValidatedEvent(
-                        message!.OrderUniqueId,
+                        @event!.OrderUniqueId,
                         false,
                         orderItems,
                         invalidItems.Select(i => i.Id).ToList());
@@ -59,7 +64,7 @@ public class OrderRequestedEventHandler : MessageBusConsumerServiceHandlerBase<O
             {
                 orderValidatedEvent =
                     new OrderValidatedEvent(
-                        message.OrderUniqueId,
+                        @event.OrderUniqueId,
                         true,
                         orderItems);
             }
@@ -67,7 +72,5 @@ public class OrderRequestedEventHandler : MessageBusConsumerServiceHandlerBase<O
 
         await _messageBusProducerService
             .PublishAsync(nameof(OrderValidatedEvent), orderValidatedEvent, cancellationToken);
-
-        return MessageBusConsumerResult.Ack;
     }
 }

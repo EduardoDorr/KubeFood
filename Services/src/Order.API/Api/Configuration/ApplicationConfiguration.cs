@@ -1,6 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 
 using KubeFood.Core;
+using KubeFood.Core.Middlewares;
 using KubeFood.Core.Swagger;
 using KubeFood.Order.API.Api.Endpoints;
 using KubeFood.Order.API.Application;
@@ -22,6 +23,9 @@ public static class ApplicationConfiguration
         builder.Services.AddApplicationModule();
         builder.Services.AddInfrastructureModule(builder.Configuration);
 
+        builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+        builder.Services.AddProblemDetails();
+
         builder.Services.Configure<JsonOptions>(options =>
         {
             options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
@@ -40,7 +44,6 @@ public static class ApplicationConfiguration
 
     public static async Task ConfigureApplicationPipeline(this WebApplication app)
     {
-        // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();
@@ -48,6 +51,7 @@ public static class ApplicationConfiguration
         }
 
         app.UseStaticFiles();
+        //app.UseExceptionHandler();
         app.UseHttpsRedirection();
         app.MapOrderEndpoints();
 

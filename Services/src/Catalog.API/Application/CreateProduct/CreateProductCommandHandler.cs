@@ -1,7 +1,8 @@
 ﻿using KubeFood.Catalog.API.Domain;
+using KubeFood.Core.Helpers;
 using KubeFood.Core.Interfaces;
 using KubeFood.Core.Persistence.UnitOfWork;
-using KubeFood.Core.Results;
+using KubeFood.Core.Results.Base;
 
 namespace KubeFood.Catalog.API.Application.CreateProduct;
 
@@ -27,17 +28,9 @@ public class CreateProductCommandHandler : ICreateProductCommandHandler
         _productRepository.Create(product);
         var createResult = await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        if (createResult > 0)
+        if (createResult < 1)
             return Result.Fail<string>(ProductError.CannotCreate);
 
-        product.SetUuid(product.Id);
-
-        _productRepository.Update(product);
-        var updateResult = await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-        if (updateResult > 0)
-            return Result.Fail<string>(ProductError.CannotUpdate);
-
-        return Result.Ok(product.Uuid);
+        return Result.Ok(product.Id.EncodeId());
     }
 }

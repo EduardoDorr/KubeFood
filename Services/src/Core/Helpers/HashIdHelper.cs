@@ -54,66 +54,71 @@ public static class HashIdHelper
     }
 
     /// <summary>
-    /// Decode an integer Id from a given hash Id.
+    /// Decodes a hashed Id string into a strongly-typed value.
+    /// Supports decoding to <see cref="int"/>, <see cref="string"/>, or <see cref="ObjectId"/>.
     /// </summary>
-    /// <param name="hashId">The sting hashed Id to decode to an integer.</param>
-    /// <returns>A integer Id.</returns>
-    public static int DecodeIntegerId(this string hashId)
+    /// <typeparam name="T">
+    /// The target type to decode to:
+    /// <list type="bullet">
+    /// <item><description><see cref="int"/> – Decodes directly to an integer Id.</description></item>
+    /// <item><description><see cref="string"/> – Decodes an integer from the hash and converts it back to its original UTF-8 string representation.</description></item>
+    /// <item><description><see cref="ObjectId"/> – Decodes from Base64-like hash into a MongoDB ObjectId.</description></item>
+    /// </list>
+    /// </typeparam>
+    /// <param name="hashId">The hashed Id string to decode.</param>
+    /// <returns>The decoded value of type <typeparamref name="T"/>.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when the <param name="hashId"> is null.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when the decoded numeric Id is less than or equal to zero.</exception>
+    /// <exception cref="NotSupportedException">Thrown when the target type <typeparamref name="T"/> is not supported.</exception>
+    public static T DecodeHashId<T>(this string hashId)
     {
-        var decodedId = _hashids.Decode(hashId).FirstOrDefault();
+        ArgumentNullException.ThrowIfNull(hashId, nameof(hashId));
 
-        if (decodedId <= 0)
-            throw new ArgumentOutOfRangeException(nameof(hashId), "Id must be greater than zero.");
-
-
-        return decodedId;
-    }
-
-    /// <summary>
-    /// Decode an integer Id from a given hash Id.
-    /// </summary>
-    /// <param name="hashId">The sting hashed Id to decode to an string.</param>
-    /// <returns>A string Id.</returns>
-    public static string DecodeStringId(this string hashId)
-    {
-        var numbers = _hashids.Decode(hashId).FirstOrDefault();
-
-        if (numbers <= 0)
-            throw new ArgumentOutOfRangeException(nameof(hashId), "Id must be greater than zero.");
-
-        var bytes = BitConverter.GetBytes(numbers);
-
-        if (BitConverter.IsLittleEndian)
-            Array.Reverse(bytes);
-
-        var decodedId = Encoding.UTF8.GetString(bytes);
-
-        return decodedId;
-    }
-
-    /// <summary>
-    /// Decode an string Id from a given hash Id.
-    /// </summary>
-    /// <param name="hashId">The string hashed Id to decode to an ObjectId.</param>
-    /// <returns>A ObjectId.</returns>
-    public static ObjectId DecodeObjectId(this string hashId)
-    {
-        var base64 = hashId
-            .Replace("-", "+")
-            .Replace("_", "/");
-
-        switch (base64.Length % 4)
+        if (typeof(T) == typeof(int))
         {
-            case 2:
-                base64 += "==";
-                break;
-            case 3:
-                base64 += "=";
-                break;
+            var decodedId = _hashids.Decode(hashId).FirstOrDefault();
+            if (decodedId <= 0)
+                throw new ArgumentOutOfRangeException(nameof(hashId), "Id must be greater than zero.");
+
+            return (T)(object)decodedId;
         }
 
-        var bytes = Convert.FromBase64String(base64);
+        if (typeof(T) == typeof(string))
+        {
+            var numbers = _hashids.Decode(hashId).FirstOrDefault();
+            if (numbers <= 0)
+                throw new ArgumentOutOfRangeException(nameof(hashId), "Id must be greater than zero.");
 
-        return new ObjectId(bytes);
+            var bytes = BitConverter.GetBytes(numbers);
+            if (BitConverter.IsLittleEndian)
+                Array.Reverse(bytes);
+
+            var decodedId = Encoding.UTF8.GetString(bytes);
+            return (T)(object)decodedId;
+        }
+
+        if (typeof(T) == typeof(ObjectId))
+        {
+            var base64 = hashId
+                .Replace("-", "+")
+                .Replace("_", "/");
+
+            switch (base64.Length % 4)
+            {
+                case 2:
+                    base64 += "==";
+                    break;
+                case 3:
+                    base64 += "=";
+                    break;
+            }
+
+            var bytes = Convert.FromBase64String(base64);
+            var objectId = new ObjectId(bytes);
+
+            return (T)(object)objectId;
+        }
+
+        throw new NotSupportedException($"Decode type is not supported: {typeof(T)}");
     }
 }

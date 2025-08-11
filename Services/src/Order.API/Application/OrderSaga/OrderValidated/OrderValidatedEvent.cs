@@ -1,4 +1,5 @@
-﻿using KubeFood.Order.API.Domain;
+﻿using KubeFood.Core.Events;
+using KubeFood.Order.API.Domain;
 
 namespace KubeFood.Order.API.Application.OrderSaga.OrderValidated;
 
@@ -6,7 +7,8 @@ public sealed record OrderValidatedEvent(
     Guid OrderUniqueId,
     bool Valid,
     List<OrderValidatedItemEvent> OrderItems,
-    List<string>? InvalidOrderItems = null);
+    List<string>? InvalidOrderItems = null)
+    : IEvent;
 
 public sealed record OrderValidatedItemEvent(
     string ProductId,

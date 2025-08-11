@@ -1,25 +1,26 @@
-﻿using KubeFood.Core.DomainEvents;
+﻿using KubeFood.Core.Events;
 using KubeFood.Core.MessageBus;
+using KubeFood.Order.API.Domain.Events;
 
 namespace KubeFood.Order.API.Application.OrderSaga.OrderRequested;
 
-public class OrderRequestedEventHandler : IDomainEventHandler<Domain.Events.OrderRequestedEvent>
+public class OrderRequestedEventHandler : EventHandlerBase<OrderRequestedEvent>
 {
-    private readonly ILogger<OrderRequestedEventHandler> _logger;
     private readonly IMessageBusProducerService _messageBusProducerService;
 
     public OrderRequestedEventHandler(
         ILogger<OrderRequestedEventHandler> logger,
         IMessageBusProducerService messageBusProducerService)
+        : base(logger)
     {
-        _logger = logger;
         _messageBusProducerService = messageBusProducerService;
     }
 
-    public async Task HandleAsync(Domain.Events.OrderRequestedEvent domainEvent, CancellationToken cancellationToken = default)
+    protected override async Task ExecuteAsync(OrderRequestedEvent @event, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation($"Handling {GetType().Name}");
 
-        await _messageBusProducerService.PublishAsync(nameof(Domain.Events.OrderRequestedEvent), domainEvent, cancellationToken);
+        await _messageBusProducerService
+            .PublishAsync(nameof(OrderRequestedEvent), @event, cancellationToken);
     }
 }

@@ -1,4 +1,4 @@
-﻿using KubeFood.Core.DomainEvents;
+﻿using KubeFood.Core.Events;
 
 namespace KubeFood.Core.Entities;
 
@@ -12,8 +12,8 @@ public abstract class BaseEntity
 
     protected BaseEntity()
     {
-        CreatedAt = DateTime.UtcNow;
-        UpdatedAt = DateTime.UtcNow;
+        CreatedAt = DateTime.Now;
+        UpdatedAt = DateTime.Now;
 
         IsActive = true;
     }
@@ -39,5 +39,5 @@ public abstract class BaseEntity
 
 public abstract class BaseEntity<TId> : BaseEntity
 {
-    public TId Id { get; }    
+    public TId Id { get; private set; }    
 }

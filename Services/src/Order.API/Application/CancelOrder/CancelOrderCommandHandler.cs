@@ -1,6 +1,6 @@
 ﻿using KubeFood.Core.Interfaces;
 using KubeFood.Core.Persistence.UnitOfWork;
-using KubeFood.Core.Results;
+using KubeFood.Core.Results.Base;
 using KubeFood.Order.API.Domain;
 
 namespace KubeFood.Order.API.Application.CancelOrder;

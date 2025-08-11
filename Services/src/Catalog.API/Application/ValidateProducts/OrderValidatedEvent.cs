@@ -21,5 +21,5 @@ public static class OrderValidatedItemExtensions
             : products.Select(p =>
                 p.ToOrderItem(
                     requestedItems
-                        .SingleOrDefault(r => r.Id == p.Uuid)!.Quantity)).ToList();
+                        .SingleOrDefault(r => r.Id == p.Id.EncodeId())!.Quantity)).ToList();
 }

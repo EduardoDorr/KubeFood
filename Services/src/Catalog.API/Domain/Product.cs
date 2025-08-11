@@ -1,14 +1,14 @@
-﻿using KubeFood.Core.Entities;
+﻿using KubeFood.Catalog.API.Domain.Events;
+using KubeFood.Core.Entities;
 using KubeFood.Core.Helpers;
-using KubeFood.Core.Results;
+using KubeFood.Core.Results.Base;
 
 using MongoDB.Bson;
 
 namespace KubeFood.Catalog.API.Domain;
 
-public sealed class Product : BaseMongoEntity
+public sealed class Product : BaseEntity<ObjectId>
 {
-    public string? Uuid { get; private set; }
     public string Name { get; private set; }
     public string? Description { get; private set; }
     public ProductCategory Category { get; private set; }
@@ -39,11 +39,8 @@ public sealed class Product : BaseMongoEntity
         Category = category;
         Value = value;
         Weight = weight;
-    }
 
-    public void SetUuid(ObjectId id)
-    {
-        Uuid = id.EncodeId();
+        AddDomainEvent(new ProductCreatedEvent(Id.EncodeId(), Name, Category, Weight));
     }
 
     public Result Update(
@@ -68,9 +65,23 @@ public sealed class Product : BaseMongoEntity
         Value = value;
         Weight = weight;
 
-        SetUpdatedAtDate(DateTime.UtcNow);
+        SetUpdatedAtDate(DateTime.Now);
+
+        AddDomainEvent(new ProductUpdatedEvent(Id.EncodeId(), Name, Category, Weight));
 
         return Result.Ok();
+    }
+
+    public override void Activate()
+    {
+        base.Activate();
+        AddDomainEvent(new ProductUpdatedEvent(Id.EncodeId(), Name, Category, Weight));
+    }
+
+    public override void Deactivate()
+    {
+        base.Deactivate();
+        AddDomainEvent(new ProductUpdatedEvent(Id.EncodeId(), Name, Category, Weight, false));
     }
 
     public Result SetImage(string imageUrl)

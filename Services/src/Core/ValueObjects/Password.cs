@@ -1,7 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 
 using KubeFood.Core.Auth;
-using KubeFood.Core.Results;
+using KubeFood.Core.Results.Base;
 using KubeFood.Core.Results.Errors;
 
 namespace KubeFood.Core.ValueObjects;

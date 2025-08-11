@@ -1,5 +1,5 @@
-﻿using KubeFood.Core.Models.Pagination;
-using KubeFood.Core.Results;
+﻿using KubeFood.Core.Filters;
+using KubeFood.Core.Models.Pagination;
 using KubeFood.Order.API.Application.CancelOrder;
 using KubeFood.Order.API.Application.CreateOrder;
 using KubeFood.Order.API.Application.GetOrder;
@@ -17,6 +17,7 @@ public static class OrderEndpoint
     public static WebApplication MapOrderEndpoints(this WebApplication app)
     {
         var group = app.MapGroup(ROUTE)
+            .AddEndpointFilter<ApiResultEndpointFilter>()
             .WithTags("Orders");
 
         group.MapGet("/", async (
@@ -24,11 +25,7 @@ public static class OrderEndpoint
             IGetOrdersQueryHandler service,
             CancellationToken cancellationToken) =>
         {
-            var result = await service.HandleAsync(new(pagination), cancellationToken);
-
-            return result.Match(
-                onSuccess: success => Results.Ok(result),
-                onFailure: error => error.ToProblemDetails());
+            return await service.HandleAsync(new(pagination), cancellationToken);
         })
         .Produces<PaginationResult<PaginationResult<Domain.Order>>>(StatusCodes.Status200OK)
         .Produces(StatusCodes.Status500InternalServerError);
@@ -39,11 +36,7 @@ public static class OrderEndpoint
             IGetOrdersByCustomerQueryHandler service,
             CancellationToken cancellationToken) =>
         {
-            var result = await service.HandleAsync(new(customerId, pagination), cancellationToken);
-
-            return result.Match(
-                onSuccess: success => Results.Ok(result.Value),
-                onFailure: error => error.ToProblemDetails());
+            return await service.HandleAsync(new(customerId, pagination), cancellationToken);
         })
         .Produces<PaginationResult<OrderViewModel>>(StatusCodes.Status200OK)
         .Produces(StatusCodes.Status500InternalServerError);
@@ -53,11 +46,7 @@ public static class OrderEndpoint
             IGetOrderQueryHandler service,
             CancellationToken cancellationToken) =>
         {
-            var result = await service.HandleAsync(new(id), cancellationToken);
-
-            return result.Match(
-                onSuccess: success => Results.Ok(result.Value),
-                onFailure: error => error.ToProblemDetails());
+            return await service.HandleAsync(new(id), cancellationToken);
         })
         .Produces<OrderViewModel>(StatusCodes.Status200OK)
         .Produces(StatusCodes.Status404NotFound)
@@ -68,14 +57,7 @@ public static class OrderEndpoint
             ICreateOrderCommandHandler service,
             CancellationToken cancellationToken) =>
         {
-            if (command is null)
-                return Results.BadRequest("Order cannot be null.");
-
-            var result = await service.HandleAsync(command, cancellationToken);
-
-            return result.Match(
-                onSuccess: success => Results.Created($"{ROUTE}/{success}", command),
-                onFailure: error => error.ToProblemDetails());
+            return await service.HandleAsync(command, cancellationToken);
         })
         .Produces<int>(StatusCodes.Status201Created)
         .Produces(StatusCodes.Status500InternalServerError);
@@ -86,14 +68,7 @@ public static class OrderEndpoint
             IUpdateOrderCommandHandler service,
             CancellationToken cancellationToken) =>
         {
-            if (model is null)
-                return Results.BadRequest("Order cannot be null.");
-
-            var result = await service.HandleAsync(model.ToCommand(id), cancellationToken);
-
-            return result.Match(
-                onSuccess: () => Results.NoContent(),
-                onFailure: error => error.ToProblemDetails());
+            return await service.HandleAsync(model.ToCommand(id), cancellationToken);
         })
         .Produces(StatusCodes.Status204NoContent)
         .Produces(StatusCodes.Status404NotFound)
@@ -104,11 +79,7 @@ public static class OrderEndpoint
             ICancelOrderCommandHandler service,
             CancellationToken cancellationToken) =>
         {
-            var result = await service.HandleAsync(new(id), cancellationToken);
-
-            return result.Match(
-                onSuccess: () => Results.NoContent(),
-                onFailure: error => error.ToProblemDetails());
+            return await service.HandleAsync(new(id), cancellationToken);
         })
         .Produces(StatusCodes.Status204NoContent)
         .Produces(StatusCodes.Status404NotFound)

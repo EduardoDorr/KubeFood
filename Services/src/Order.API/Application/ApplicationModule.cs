@@ -16,7 +16,7 @@ public static class ApplicationModule
     {
         services
             .AddServices()
-            .AddDomainEventHandlers();
+            .AddEventHandlers();
 
         return services;
     }
@@ -33,9 +33,9 @@ public static class ApplicationModule
         return services;
     }
 
-    private static IServiceCollection AddDomainEventHandlers(this IServiceCollection services)
+    private static IServiceCollection AddEventHandlers(this IServiceCollection services)
     {
-        services.AddDomainEventHandlers(Assembly.GetExecutingAssembly());
+        services.AddEventHandlers(Assembly.GetExecutingAssembly());
 
         return services;
     }

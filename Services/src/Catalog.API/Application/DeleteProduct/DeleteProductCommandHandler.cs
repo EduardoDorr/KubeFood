@@ -2,7 +2,9 @@
 using KubeFood.Core.Helpers;
 using KubeFood.Core.Interfaces;
 using KubeFood.Core.Persistence.UnitOfWork;
-using KubeFood.Core.Results;
+using KubeFood.Core.Results.Base;
+
+using MongoDB.Bson;
 
 namespace KubeFood.Catalog.API.Application.DeleteProduct;
 
@@ -26,7 +28,7 @@ public class DeleteProductCommandHandler : IDeleteProductCommandHandler
         var product =
             await _productRepository
                 .GetByIdAsync(
-                    request.Uiid.DecodeObjectId(),
+                    request.Uiid.DecodeHashId<ObjectId>(),
                     cancellationToken);
 
         if (product is null)

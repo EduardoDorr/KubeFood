@@ -20,13 +20,13 @@ public class Order : BaseEntity<int>
 
     protected Order()
     {
-        UniqueId = Guid.NewGuid();
+        UniqueId = Guid.CreateVersion7();
     }
 
     public Order(
         int customerId,
         Address deliveryAddress,
-        List<(string, int)> items,
+        List<(string Id, int Quantity)> items,
         PaymentType paymentType) : this()
     {
         CustomerId = customerId;
@@ -39,7 +39,7 @@ public class Order : BaseEntity<int>
 
         AddDomainEvent(new OrderRequestedEvent(
             UniqueId,
-            items.Select(i => new OrderRequestedItemEvent(i.Item1, i.Item2)).ToList()));
+            items.Select(i => new OrderRequestedItemEvent(i.Id, i.Quantity)).ToList()));
     }
 
     public void AddItems(List<OrderItem> items)
@@ -54,7 +54,12 @@ public class Order : BaseEntity<int>
         => DeliveryAddress = deliveryAddress;
 
     public void SetStatus(OrderStatus status)
-        => Status = status;
+    {
+        Status = status;
+        StatusHistory.Add(new(
+            Id,
+            Status));
+    }
 
     public void SetTrackingCode(string trackingCode)
         => TrackingCode = trackingCode;

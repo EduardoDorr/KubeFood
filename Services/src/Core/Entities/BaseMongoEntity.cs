@@ -1,4 +1,4 @@
-﻿using KubeFood.Core.DomainEvents;
+﻿using KubeFood.Core.Events;
 
 using MongoDB.Bson;
 

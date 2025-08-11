@@ -1,13 +1,14 @@
 ﻿using KubeFood.Catalog.API.Application.CreateProduct;
 using KubeFood.Catalog.API.Application.DeleteProduct;
-using KubeFood.Catalog.API.Application.GetProduct;
+using KubeFood.Catalog.API.Application.GetByIdProduct;
 using KubeFood.Catalog.API.Application.GetProducts;
 using KubeFood.Catalog.API.Application.GetProductsByIds;
 using KubeFood.Catalog.API.Application.Models;
 using KubeFood.Catalog.API.Application.UpdateProduct;
 using KubeFood.Catalog.API.Application.UpdateProductImage;
+using KubeFood.Core.Filters;
 using KubeFood.Core.Models.Pagination;
-using KubeFood.Core.Results;
+using KubeFood.Core.Results.Api;
 
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,6 +21,7 @@ public static class ProductEndpoint
     public static WebApplication MapProductEndpoints(this WebApplication app)
     {
         var group = app.MapGroup(ROUTE)
+            .AddEndpointFilter<ApiResultEndpointFilter>()
             .WithTags("Products");
 
         group.MapGet("/", async (
@@ -27,25 +29,17 @@ public static class ProductEndpoint
             [FromServices] IGetProductsQueryHandler service,
             CancellationToken cancellationToken) =>
         {
-            var result = await service.HandleAsync(new(pagination), cancellationToken);
-
-            return result.Match(
-                onSuccess: success => Results.Ok(result.Value),
-                onFailure: error => error.ToProblemDetails());
+            return await service.HandleAsync(new(pagination), cancellationToken);
         })
-        .Produces<PaginationResult<ProductViewModel>>(StatusCodes.Status200OK)
+        .Produces<ApiResult<PaginationResult<ProductViewModel>>>(StatusCodes.Status200OK)
         .Produces(StatusCodes.Status500InternalServerError);
 
-        group.MapPost("/uiids", async (
+        group.MapPost("/uuids", async (
             [FromBody] GetProductsByUuidsQuery query,
             [FromServices] IGetProductsByUuidsQueryHandler service,
             CancellationToken cancellationToken) =>
         {
-            var result = await service.HandleAsync(query, cancellationToken);
-
-            return result.Match(
-                onSuccess: success => Results.Ok(result.Value),
-                onFailure: error => error.ToProblemDetails());
+            return await service.HandleAsync(query, cancellationToken);
         })
         .Produces<PaginationResult<ProductViewModel>>(StatusCodes.Status200OK)
         .Produces(StatusCodes.Status500InternalServerError);
@@ -55,11 +49,7 @@ public static class ProductEndpoint
             [FromServices] IGetProductQueryHandler service,
             CancellationToken cancellationToken) =>
         {
-            var result = await service.HandleAsync(new(uuid), cancellationToken);
-
-            return result.Match(
-                onSuccess: success => Results.Ok(result.Value),
-                onFailure: error => error.ToProblemDetails());
+            return await service.HandleAsync(new(uuid), cancellationToken);
         })
         .Produces<ProductViewModel>(StatusCodes.Status200OK)
         .Produces(StatusCodes.Status404NotFound)
@@ -70,14 +60,7 @@ public static class ProductEndpoint
             [FromServices] ICreateProductCommandHandler service,
             CancellationToken cancellationToken) =>
         {
-            if (command is null)
-                return Results.BadRequest("Product cannot be null.");
-
-            var result = await service.HandleAsync(command, cancellationToken);
-
-            return result.Match(
-                onSuccess: success => Results.Created($"{ROUTE}/{success}", command),
-                onFailure: error => error.ToProblemDetails());
+            return await service.HandleAsync(command, cancellationToken);
         })
         .Produces<string>(StatusCodes.Status201Created)
         .Produces(StatusCodes.Status500InternalServerError);
@@ -88,14 +71,7 @@ public static class ProductEndpoint
             [FromServices] IUpdateProductCommandHandler service,
             CancellationToken cancellationToken) =>
         {
-            if (model is null)
-                return Results.BadRequest("Product cannot be null.");
-
-            var result = await service.HandleAsync(model.ToCommand(uuid), cancellationToken);
-
-            return result.Match(
-                onSuccess: () => Results.NoContent(),
-                onFailure: error => error.ToProblemDetails());
+            return await service.HandleAsync(model.ToCommand(uuid), cancellationToken);
         })
         .Produces(StatusCodes.Status204NoContent)
         .Produces(StatusCodes.Status404NotFound)
@@ -107,11 +83,7 @@ public static class ProductEndpoint
             [FromServices] IUpdateProductImageCommandHandler service,
             CancellationToken cancellationToken) =>
         {
-            var result = await service.HandleAsync(new(uuid, model.ImageUrl), cancellationToken);
-
-            return result.Match(
-                onSuccess: () => Results.NoContent(),
-                onFailure: error => error.ToProblemDetails());
+            return await service.HandleAsync(new(uuid, model.ImageUrl), cancellationToken);
         })
         .Produces(StatusCodes.Status204NoContent)
         .Produces(StatusCodes.Status404NotFound)
@@ -122,11 +94,7 @@ public static class ProductEndpoint
             [FromServices] IDeleteProductCommandHandler service,
             CancellationToken cancellationToken) =>
         {
-            var result = await service.HandleAsync(new(uuid), cancellationToken);
-
-            return result.Match(
-                onSuccess: () => Results.NoContent(),
-                onFailure: error => error.ToProblemDetails());
+            return await service.HandleAsync(new(uuid), cancellationToken);
         })
         .Produces(StatusCodes.Status204NoContent)
         .Produces(StatusCodes.Status404NotFound)

@@ -1,5 +1,5 @@
 ﻿using KubeFood.Core.Entities;
-using KubeFood.Core.Persistence.OutboxInbox;
+using KubeFood.Core.Persistence.BoxMessages;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -19,12 +19,12 @@ public sealed class PublishDomainEventsToOutBoxMessagesInterceptor<TId> : SaveCh
             return await base.SavingChangesAsync(eventData, result, cancellationToken);
 
         if (eventData.Context is not null)
-            await InsertOutBoxMessagesAsync(eventData.Context);
+            await InsertOutBoxMessagesAsync(eventData.Context, cancellationToken);
 
         return await base.SavingChangesAsync(eventData, result, cancellationToken);
     }
 
-    private static async Task InsertOutBoxMessagesAsync(DbContext context)
+    private static async Task InsertOutBoxMessagesAsync(DbContext context, CancellationToken cancellationToken)
     {
         var outboxMessages = context
             .ChangeTracker
@@ -51,6 +51,8 @@ public sealed class PublishDomainEventsToOutBoxMessagesInterceptor<TId> : SaveCh
             })
             .ToList();
 
-        await context.Set<OutboxMessage<TId>>().AddRangeAsync(outboxMessages);
+        if (outboxMessages.Count > 0)
+            await context.Set<OutboxMessage<TId>>()
+                .AddRangeAsync(outboxMessages, cancellationToken);
     }
 }

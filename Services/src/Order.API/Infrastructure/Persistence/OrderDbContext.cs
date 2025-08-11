@@ -1,5 +1,5 @@
-﻿using KubeFood.Core.Persistence.Configurations;
-using KubeFood.Core.Persistence.OutboxInbox;
+﻿using KubeFood.Core.Persistence.BoxMessages;
+using KubeFood.Core.Persistence.Configurations;
 
 using Microsoft.EntityFrameworkCore;
 
