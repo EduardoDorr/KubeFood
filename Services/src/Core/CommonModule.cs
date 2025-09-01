@@ -35,10 +35,10 @@ public static class CommonModule
         return services;
     }
 
-    public static IServiceCollection AddMessageBusConsumerInboxService<TEvent, TId, TContext>(this IServiceCollection services)
-        where TContext : DbContext
+    public static IServiceCollection AddMessageBusConsumerInboxService<TEvent, TId, TDbContext>(this IServiceCollection services)
+        where TDbContext : DbContext
     {
-        services.AddHostedService<MessageBusConsumerInboxService<TEvent, TId, TContext>>();
+        services.AddHostedService<MessageBusConsumerInboxService<TEvent, TId, TDbContext>>();
 
         return services;
     }

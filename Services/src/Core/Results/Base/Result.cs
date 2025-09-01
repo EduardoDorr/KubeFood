@@ -8,7 +8,7 @@ public class Result : ResultBase
 
     protected Result(IError error)
     {
-        _errors.Add(error);
+        AddError(error);
     }
 
     protected Result(IEnumerable<IError> errors)
@@ -16,7 +16,7 @@ public class Result : ResultBase
         if (errors is null)
             throw new ArgumentNullException(nameof(errors), "The list of errors cannot be null");
 
-        _errors.AddRange(errors);
+        AddErrors(errors);
     }
 
     public static Result Ok() => new Result();
@@ -37,7 +37,7 @@ public class Result<TValue> : ResultBase<TValue>
 
     protected Result(IError error)
     {
-        _errors.Add(error);
+        AddError(error);
     }
 
     protected Result(IEnumerable<IError> errors)
@@ -45,7 +45,7 @@ public class Result<TValue> : ResultBase<TValue>
         if (errors == null)
             throw new ArgumentNullException(nameof(errors), "The list of errors cannot be null");
 
-        _errors.AddRange(errors);
+        AddErrors(errors);
     }
 
     public static Result<TValue> Ok<TValue>(TValue value) => new Result<TValue>(value);

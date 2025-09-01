@@ -16,7 +16,7 @@ public static class ResultExtensions
     public static T Match<T, TValue>(this Result<TValue> result, Func<TValue?, T> onSuccess, Func<Result<TValue>, T> onFailure)
     {
         return result.Success ? onSuccess(result.Value) : onFailure(result);
-    }
+    }    
 
     public static ProblemDetails ToProblemDetails(this IError error)
         => new()

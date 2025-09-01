@@ -2,7 +2,7 @@
 using KubeFood.Core.MessageBus;
 using KubeFood.Order.API.Domain.Events;
 
-namespace KubeFood.Order.API.Application.OrderSaga.OrderStockReservationRequested;
+namespace KubeFood.Order.API.Application.OrderSaga;
 
 public class OrderStockReservationRequestedEventHandler : EventHandlerBase<OrderStockReservationRequestedEvent>
 {

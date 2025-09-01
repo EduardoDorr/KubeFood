@@ -2,8 +2,8 @@
 using KubeFood.Core.Persistence.BoxMessages;
 using KubeFood.Core.Persistence.Interceptors;
 using KubeFood.Core.Persistence.UnitOfWork;
-using KubeFood.Order.API.Application.OrderSaga.OrderValidated;
 using KubeFood.Order.API.Domain;
+using KubeFood.Order.API.Domain.Events;
 using KubeFood.Order.API.Infrastructure.Persistence;
 using KubeFood.Order.API.Infrastructure.Persistence.Repositories;
 
@@ -63,6 +63,7 @@ public static class InfrastructureModule
     {
         services.AddMessageBusProducer();
         services.AddMessageBusConsumerInboxService<OrderValidatedEvent, int, OrderDbContext>();
+        services.AddMessageBusConsumerInboxService<OrderStockReservatedEvent, int, OrderDbContext>();
 
         return services;
     }

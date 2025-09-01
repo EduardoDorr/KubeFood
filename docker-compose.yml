@@ -8,13 +8,13 @@ services:
       environment:
         RABBITMQ_DEFAULT_USER: guest
         RABBITMQ_DEFAULT_PASS: guest
-      volumes:
-        - rabbitmq-data:/var/lib/rabbitmq
       healthcheck:
         test: ["CMD", "rabbitmqctl", "status"]
         interval: 10s
         timeout: 5s
         retries: 5
+      volumes:
+        - rabbitmq-data:/var/lib/rabbitmq
       networks:
           - app-network
 
@@ -23,27 +23,28 @@ services:
         container_name: catalogdb
         ports:
             - "27018:27017"
-        volumes:
-            - ./data/db:/data/db
+        restart: always
         healthcheck:
           test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
           interval: 10s
           timeout: 3s
           retries: 5
+        volumes:
+            - ./data/db:/data/db
         networks:
             - app-network
     
     orderdb:
       image: mysql:8.0.41
       container_name: orderdb
-      restart: always
       environment:
         MYSQL_ROOT_PASSWORD: root
         MYSQL_DATABASE: orderdb
         MYSQL_USER: admin
-        MYSQL_PASSWORD: admin
+        MYSQL_PASSWORD: Admin123
       ports:
         - "3307:3306"
+      restart: always
       healthcheck:
         test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uadmin", "-padmin"]
         interval: 10s
@@ -51,6 +52,27 @@ services:
         start_period: 20s
       volumes:
         - mysql-data:/var/lib/mysql
+      networks:
+        - app-network
+
+    inventorydb:
+      image: mcr.microsoft.com/mssql/server:2022-latest
+      container_name: inventorydb
+      environment:
+        ACCEPT_EULA: 'Y'
+        MSSQL_SA_PASSWORD: 'Admin123'
+        MSSQL_PID: 'Developer'
+      ports:
+        - "1434:1433"
+      restart: always
+      healthcheck:
+        test: ["CMD-SHELL", "pgrep sqlservr > /dev/null || exit 1"]
+        interval: 10s
+        retries: 10
+        start_period: 10s
+        timeout: 3s
+      volumes:
+        - mssql_data:/var/opt/mssql
       networks:
         - app-network
 
@@ -93,7 +115,7 @@ services:
             - ASPNETCORE_HTTPS_PORTS=8081
             - ASPNETCORE_Kestrel__Certificates__Default__Password=MyPassword123
             - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
-            - ConnectionStrings__OrderDbConnection=Server=orderdb;Database=orderdb;Uid=admin;Pwd=admin;SslMode=None;
+            - ConnectionStrings__OrderDbConnection=Server=orderdb;Database=orderdb;Uid=admin;Pwd=Admin123;AllowPublicKeyRetrieval=True;SslMode=None;
             - RabbitMqConfiguration__HostName=rabbitmq
         ports:
             - "3001:8080"
@@ -108,6 +130,33 @@ services:
         networks:
             - app-network
 
+    inventoryapi:
+        image: inventoryapi
+        container_name: inventoryapi
+        build:
+          context: ./Services/src
+          dockerfile: ./Inventory.Api/Dockerfile
+        environment:
+            - ASPNETCORE_ENVIRONMENT=Development
+            - ASPNETCORE_HTTP_PORTS=8080
+            - ASPNETCORE_HTTPS_PORTS=8081
+            - ASPNETCORE_Kestrel__Certificates__Default__Password=MyPassword123
+            - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+            - ConnectionStrings__InventoryDbConnection=Server=inventorydb;Database=inventorydb;User Id=sa;Password=Admin123;TrustServerCertificate=True;
+            - RabbitMqConfiguration__HostName=rabbitmq
+        ports:
+            - "3002:8080"
+            - "3032:8081"
+        volumes:
+            - ./Services/aspnetapp.pfx:/https/aspnetapp.pfx:ro
+        depends_on:
+          inventorydb:
+            condition: service_healthy
+          rabbitmq:
+            condition: service_healthy
+        networks:
+            - app-network
+
 networks:
   app-network:
     driver: bridge
@@ -116,3 +165,4 @@ volumes:
   rabbitmq-data:
   mysql-data:
     driver: local
+  mssql_data:

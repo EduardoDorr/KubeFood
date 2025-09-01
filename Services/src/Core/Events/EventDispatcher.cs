@@ -34,6 +34,9 @@ public class EventDispatcher : IEventDispatcher
             {
                 var methodInfo = handlerType.GetMethod(HANDLER_ASYNC);
 
+                if (methodInfo is null)
+                    continue;
+
                 var handlerParam = Expression.Parameter(typeof(object), "handler");
                 var eventParam = Expression.Parameter(typeof(IEvent), "event");
                 var tokenParam = Expression.Parameter(typeof(CancellationToken), "cancellationToken");

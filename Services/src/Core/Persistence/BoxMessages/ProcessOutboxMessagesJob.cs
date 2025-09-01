@@ -9,16 +9,16 @@ using Newtonsoft.Json;
 
 namespace KubeFood.Core.Persistence.BoxMessages;
 
-public sealed class ProcessOutboxMessagesJob<TId, TContext> : BackgroundService
-    where TContext : DbContext
+public sealed class ProcessOutboxMessagesJob<TId, TDbContext> : BackgroundService
+    where TDbContext : DbContext
 {
     private const int BATCH_SIZE = 20;
     private const int PROCESS_INTERVAL_SECONDS = 60;
 
     private readonly IServiceProvider _provider;
-    private readonly ILogger<ProcessOutboxMessagesJob<TId, TContext>> _logger;
+    private readonly ILogger<ProcessOutboxMessagesJob<TId, TDbContext>> _logger;
 
-    public ProcessOutboxMessagesJob(IServiceProvider provider, ILogger<ProcessOutboxMessagesJob<TId, TContext>> logger)
+    public ProcessOutboxMessagesJob(IServiceProvider provider, ILogger<ProcessOutboxMessagesJob<TId, TDbContext>> logger)
     {
         _provider = provider;
         _logger = logger;
@@ -31,7 +31,7 @@ public sealed class ProcessOutboxMessagesJob<TId, TContext> : BackgroundService
             try
             {
                 using var scope = _provider.CreateAsyncScope();
-                var context = scope.ServiceProvider.GetRequiredService<TContext>();
+                var context = scope.ServiceProvider.GetRequiredService<TDbContext>();
                 var dispatcher = scope.ServiceProvider.GetRequiredService<IEventDispatcher>();
 
                 var outboxMessages = await context

@@ -13,14 +13,14 @@ using RabbitMQ.Client.Events;
 
 namespace KubeFood.Core.MessageBus;
 
-public class MessageBusConsumerInboxService<T, TId, TContext> : MessageBusConsumerBase<T>
-    where TContext : DbContext
+public class MessageBusConsumerInboxService<T, TId, TDbContext> : MessageBusConsumerBase<T>
+    where TDbContext : DbContext
 {
     private readonly IServiceProvider _serviceProvider;
 
     public MessageBusConsumerInboxService(
         IServiceProvider serviceProvider,
-        ILogger<MessageBusConsumerInboxService<T, TId, TContext>> logger,
+        ILogger<MessageBusConsumerInboxService<T, TId, TDbContext>> logger,
         IOptions<RabbitMqConfigurationOptions> rabbitMqConfigurationOptions)
         : base(logger, rabbitMqConfigurationOptions)
     {
@@ -30,7 +30,7 @@ public class MessageBusConsumerInboxService<T, TId, TContext> : MessageBusConsum
     protected override async Task HandleMessageAsync(T message, IChannel channel, BasicDeliverEventArgs ea, CancellationToken cancellationToken)
     {
         using var scope = _serviceProvider.CreateAsyncScope();
-        var context = scope.ServiceProvider.GetRequiredService<TContext>();
+        var context = scope.ServiceProvider.GetRequiredService<TDbContext>();
 
         var inboxMessage = new InboxMessage<TId>
         {

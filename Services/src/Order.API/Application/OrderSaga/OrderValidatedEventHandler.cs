@@ -3,7 +3,7 @@ using KubeFood.Core.Persistence.UnitOfWork;
 using KubeFood.Order.API.Domain;
 using KubeFood.Order.API.Domain.Events;
 
-namespace KubeFood.Order.API.Application.OrderSaga.OrderValidated;
+namespace KubeFood.Order.API.Application.OrderSaga;
 
 public class OrderValidatedEventHandler : EventHandlerBase<OrderValidatedEvent>
 {
@@ -39,8 +39,8 @@ public class OrderValidatedEventHandler : EventHandlerBase<OrderValidatedEvent>
             var orderStockReservationRequestedEvent =
                 new OrderStockReservationRequestedEvent(
                     order.UniqueId,
-                    order.Items.Select(oi =>
-                        new OrderStockReservationRequestedItemEvent(oi.ProductId, oi.Quantity)).ToList());
+                    order.Items.Select(item =>
+                        new OrderStockReservationRequestedItemEvent(item.ProductId, item.Quantity)).ToList());
 
             order.AddDomainEvent(orderStockReservationRequestedEvent);
 
