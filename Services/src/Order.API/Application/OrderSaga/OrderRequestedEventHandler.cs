@@ -6,21 +6,19 @@ namespace KubeFood.Order.API.Application.OrderSaga;
 
 public class OrderRequestedEventHandler : EventHandlerBase<OrderRequestedEvent>
 {
-    private readonly IMessageBusProducerService _messageBusProducerService;
+    private readonly IMessageBusProducerOutboxService _messageBusProducerOutboxService;
 
     public OrderRequestedEventHandler(
         ILogger<OrderRequestedEventHandler> logger,
-        IMessageBusProducerService messageBusProducerService)
+        IMessageBusProducerOutboxService messageBusProducerOutboxService)
         : base(logger)
     {
-        _messageBusProducerService = messageBusProducerService;
+        _messageBusProducerOutboxService = messageBusProducerOutboxService;
     }
 
     protected override async Task ExecuteAsync(OrderRequestedEvent @event, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation($"Handling {GetType().Name}");
-
-        await _messageBusProducerService
-            .PublishAsync(nameof(OrderRequestedEvent), @event, cancellationToken);
+        await _messageBusProducerOutboxService
+            .PublishAsync(@event, nameof(OrderRequestedEvent), cancellationToken);
     }
 }

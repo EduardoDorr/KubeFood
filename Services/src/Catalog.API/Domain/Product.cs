@@ -34,6 +34,7 @@ public sealed class Product : BaseEntity<ObjectId>
         if (weight < 0)
             throw new ArgumentOutOfRangeException(nameof(weight), "Peso não pode ser negativo");
 
+        Id = ObjectId.GenerateNewId();
         Name = name;
         Description = description;
         Category = category;
@@ -51,21 +52,19 @@ public sealed class Product : BaseEntity<ObjectId>
         decimal weight)
     {
         if (string.IsNullOrWhiteSpace(name))
-            return Result.Fail(ProductError.CannotUpdate);
+            return Result.Fail(ProductError.NameRequired);
 
-        if (value < 0)
-            return Result.Fail(ProductError.CannotUpdate);
+        if (value <= 0)
+            return Result.Fail(ProductError.ValueInvalid);
 
-        if (weight < 0)
-            return Result.Fail(ProductError.CannotUpdate);
+        if (weight <= 0)
+            return Result.Fail(ProductError.WeightInvalid);
 
         Name = name;
         Description = description;
         Category = category;
         Value = value;
         Weight = weight;
-
-        SetUpdatedAtDate(DateTime.Now);
 
         AddDomainEvent(new ProductUpdatedEvent(Id.EncodeId(), Name, Category, Weight));
 

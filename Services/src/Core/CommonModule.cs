@@ -1,8 +1,12 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using KubeFood.Core.Events;
 using KubeFood.Core.MessageBus;
-using System.Reflection;
-using KubeFood.Core.Events;
+using KubeFood.Core.Persistence.BoxMessages;
+
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+
+using System.Reflection;
+using System.Reflection.Metadata;
 
 namespace KubeFood.Core;
 
@@ -28,6 +32,18 @@ public static class CommonModule
         return services;
     }
 
+    public static IServiceCollection AddMessageBusProducerOutboxService<TId, TDbContext>(
+        this IServiceCollection services)
+        where TDbContext : DbContext
+    {
+        services.AddScoped<IMessageBusProducerOutboxService, MessageBusProducerOutboxService<TId, TDbContext>>();
+
+        if (!services.Any(sd => sd.ServiceType == typeof(IEventHandler<OutboxEvent>)))
+            services.AddScoped<IEventHandler<OutboxEvent>, OutboxEventHandler>();
+
+        return services;
+    }
+
     public static IServiceCollection AddMessageBusProducer(this IServiceCollection services)
     {
         services.AddScoped<IMessageBusProducerService, MessageBusProducerService>();
@@ -35,10 +51,17 @@ public static class CommonModule
         return services;
     }
 
-    public static IServiceCollection AddMessageBusConsumerInboxService<TEvent, TId, TDbContext>(this IServiceCollection services)
+    public static IServiceCollection AddMessageBusConsumerInboxService<TEvent, TId, TDbContext>(
+        this IServiceCollection services,
+        Action<MessageBusConsumerOptions>? consumerOptions = null)
         where TDbContext : DbContext
     {
-        services.AddHostedService<MessageBusConsumerInboxService<TEvent, TId, TDbContext>>();
+        var options = new MessageBusConsumerOptions();
+        consumerOptions?.Invoke(options);
+
+        services.AddHostedService(sp =>
+            ActivatorUtilities.CreateInstance<MessageBusConsumerInboxService<TEvent, TId, TDbContext>>(sp, options)
+        );
 
         return services;
     }

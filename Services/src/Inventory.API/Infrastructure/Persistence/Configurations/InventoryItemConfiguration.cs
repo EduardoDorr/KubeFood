@@ -19,7 +19,7 @@ internal class InventoryItemConfiguration : BaseEntityConfiguration<InventoryIte
         builder.HasIndex(o => o.ProductId)
                .IsUnique();
 
-        builder.Property(o => o.ProductName)
+        builder.Property(o => o.Name)
                .HasMaxLength(255)
                .IsRequired();
 
@@ -29,9 +29,9 @@ internal class InventoryItemConfiguration : BaseEntityConfiguration<InventoryIte
         builder.Property(o => o.QuantityReserved)
                .IsRequired();
 
-        builder.Property(o => o.RowVersion)
+        builder.Property<byte[]>("RowVersion")
                .IsRowVersion()
-               .IsRequired();
+               .IsConcurrencyToken();
 
         builder.HasMany(o => o.Movements)
                .WithOne(i => i.InventoryItem)

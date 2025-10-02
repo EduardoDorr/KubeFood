@@ -9,6 +9,7 @@ using KubeFood.Inventory.API.Application.GetItemById;
 using KubeFood.Inventory.API.Application.GetItemByProductId;
 using KubeFood.Inventory.API.Application.GetItems;
 using KubeFood.Inventory.API.Application.RemoveStockFromItem;
+using KubeFood.Inventory.API.Application.UpdateItem;
 
 namespace KubeFood.Inventory.API.Application;
 
@@ -31,6 +32,7 @@ public static class ApplicationModule
         services.AddScoped<ICreateItemCommandHandler, CreateItemCommandHandler>();
         services.AddScoped<IAddStockToItemCommandHandler, AddStockToitemCommandHandler>();
         services.AddScoped<IRemoveStockFromItemCommandHandler, RemoveStockFromItemCommandHandler>();
+        services.AddScoped<IUpdateItemCommandHandler, UpdateItemCommandHandler>();
         services.AddScoped<IDeleteItemCommandHandler, DeleteItemCommandHandler>();
 
         return services;

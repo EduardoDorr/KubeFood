@@ -16,7 +16,7 @@ public static class ProductViewModelExtensions
             : new(
                 item.Id,
                 item.ProductId,
-                item.ProductName,
+                item.Name,
                 item.QuantityAvailable);
 
     public static IEnumerable<ItemViewModel> ToModel(this IEnumerable<InventoryItem> items)

@@ -21,8 +21,9 @@ public class MessageBusConsumerInboxService<T, TId, TDbContext> : MessageBusCons
     public MessageBusConsumerInboxService(
         IServiceProvider serviceProvider,
         ILogger<MessageBusConsumerInboxService<T, TId, TDbContext>> logger,
-        IOptions<RabbitMqConfigurationOptions> rabbitMqConfigurationOptions)
-        : base(logger, rabbitMqConfigurationOptions)
+        IOptions<RabbitMqConfigurationOptions> rabbitMqConfigurationOptions,
+        MessageBusConsumerOptions? consumerOptions = null)
+        : base(logger, rabbitMqConfigurationOptions, consumerOptions)
     {
         _serviceProvider = serviceProvider;
     }
@@ -32,10 +33,12 @@ public class MessageBusConsumerInboxService<T, TId, TDbContext> : MessageBusCons
         using var scope = _serviceProvider.CreateAsyncScope();
         var context = scope.ServiceProvider.GetRequiredService<TDbContext>();
 
+        var internalEventName = _consumerOptions?.InternalEventName ?? typeof(T).Name;
+
         var inboxMessage = new InboxMessage<TId>
         {
             CreatedAt = DateTime.Now,
-            Type = typeof(T).Name,
+            Type = internalEventName,
             Content = JsonConvert.SerializeObject(
                 message,
                 new JsonSerializerSettings
@@ -47,6 +50,6 @@ public class MessageBusConsumerInboxService<T, TId, TDbContext> : MessageBusCons
         await context.Set<InboxMessage<TId>>().AddAsync(inboxMessage, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
-        await channel.BasicAckAsync(ea.DeliveryTag, false, cancellationToken: cancellationToken);
+        await channel.BasicAckAsync(ea.DeliveryTag, false, cancellationToken);
     }
 }

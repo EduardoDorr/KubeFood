@@ -2,8 +2,8 @@
 
 namespace KubeFood.Inventory.API.Domain.Events;
 
-public sealed record OrderStockReservatedEvent(
-    Guid OrderUniqueId,
+public sealed record StockReservedEvent(
+    Guid Id,
     bool IsStockReservated,
     List<string>? UnavailableItems = null)
     : IDomainEvent;

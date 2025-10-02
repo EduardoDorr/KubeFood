@@ -18,8 +18,6 @@ public sealed class ProductCreatedEventHandler : EventHandlerBase<ProductCreated
 
     protected override async Task ExecuteAsync(ProductCreatedEvent @event, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation($"Handling {GetType().Name}");
-
         await _messageBusProducerService
             .PublishAsync(nameof(ProductCreatedEvent), @event, cancellationToken);
     }

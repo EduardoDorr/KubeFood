@@ -1,11 +1,13 @@
-﻿using KubeFood.Catalog.API.Application.ValidateProducts;
+﻿using KubeFood.Catalog.API.Application.ProductValidationRequested;
 using KubeFood.Catalog.API.Domain;
 using KubeFood.Catalog.API.Infrastructure.Persistence;
 using KubeFood.Catalog.API.Infrastructure.Persistence.Repositories;
 using KubeFood.Core;
+using KubeFood.Core.Options;
 using KubeFood.Core.Persistence.BoxMessages;
 using KubeFood.Core.Persistence.Interceptors;
 using KubeFood.Core.Persistence.UnitOfWork;
+using KubeFood.Core.Telemetry;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -17,10 +19,13 @@ public static class InfrastructureModule
 {
     public static IServiceCollection AddInfrastructureModule(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddDbContext(configuration)
-                .AddRepositories()
-                .AddBackgroundJobs()
-                .AddMessageBus();
+        services
+            .AddDbContext(configuration)
+            .AddRepositories()
+            .AddBackgroundJobs()
+            .AddMessageBus()
+            .AddOptions(configuration)
+            .AddOpenTelemetry(configuration);
 
         return services;
     }
@@ -29,7 +34,8 @@ public static class InfrastructureModule
     {
         services.AddDbContext<CatalogDbContext>(options =>
             options.UseMongoDB(configuration.GetConnectionString("CatalogDbConnection"), "KubeFoodDb")
-                .AddInterceptors(new PublishDomainEventsToOutBoxMessagesInterceptor<ObjectId>()));
+                .AddInterceptors(new PublishDomainEventsToOutBoxMessagesInterceptor<ObjectId>())
+                .AddInterceptors(new UpdateAuditableInterceptor<ObjectId>()));
 
         return services;
     }
@@ -50,10 +56,21 @@ public static class InfrastructureModule
         return services;
     }
 
+    private static IServiceCollection AddOptions(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.Configure<InboxMessageOptions>(configuration.GetSection(InboxMessageOptions.Name));
+        services.Configure<OutboxMessageOptions>(configuration.GetSection(OutboxMessageOptions.Name));
+        services.Configure<OpenTelemetryOptions>(configuration.GetSection(OpenTelemetryOptions.Name));
+        services.Configure<RabbitMqConfigurationOptions>(configuration.GetSection(RabbitMqConfigurationOptions.Name));
+
+        return services;
+    }
+
     private static IServiceCollection AddMessageBus(this IServiceCollection services)
     {
         services.AddMessageBusProducer();
-        services.AddMessageBusConsumerInboxService<OrderRequestedEvent, ObjectId, CatalogDbContext>();
+        services.AddMessageBusConsumerInboxService<ProductValidationRequestedEvent, ObjectId, CatalogDbContext>(options
+            => { options.QueueName = "OrderRequestedEvent"; });
 
         return services;
     }

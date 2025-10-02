@@ -5,18 +5,18 @@ using KubeFood.Core.Results.Base;
 using KubeFood.Inventory.API.Domain;
 using KubeFood.Inventory.API.Domain.Events;
 
-namespace KubeFood.Inventory.API.Application.ProductCreated;
+namespace KubeFood.Inventory.API.Application.StockReservationRequested;
 
-public record OrderStockReservationContext(string ProductId, int Quantity, Guid OrderId);
+public record StockReservationContext(string ProductId, int Quantity, Guid OrderId);
 
-public sealed class OrderStockReservationRequestedEventHandler : EventHandlerBase<OrderStockReservationRequestedEvent>
+public sealed class StockReservationRequestedEventHandler : EventHandlerBase<StockReservationRequestedEvent>
 {
     private readonly IInventoryRepository _inventoryRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMessageBusProducerService _messageBusProducerService;
 
-    public OrderStockReservationRequestedEventHandler(
-        ILogger<OrderStockReservationRequestedEventHandler> logger,
+    public StockReservationRequestedEventHandler(
+        ILogger<StockReservationRequestedEventHandler> logger,
         IInventoryRepository inventoryRepository,
         IUnitOfWork unitOfWork,
         IMessageBusProducerService messageBusProducerService)
@@ -27,10 +27,10 @@ public sealed class OrderStockReservationRequestedEventHandler : EventHandlerBas
         _messageBusProducerService = messageBusProducerService;
     }
 
-    protected override async Task ExecuteAsync(OrderStockReservationRequestedEvent @event, CancellationToken cancellationToken = default)
+    protected override async Task ExecuteAsync(StockReservationRequestedEvent @event, CancellationToken cancellationToken = default)
     {
-        var tasks = @event.OrderItems
-            .Select(item => ValidateItemAsync(item, @event.OrderUniqueId, cancellationToken))
+        var tasks = @event.Items
+            .Select(item => ValidateItemAsync(item, @event.Id, cancellationToken))
             .ToList();
 
         var results = await Task.WhenAll(tasks);
@@ -46,16 +46,16 @@ public sealed class OrderStockReservationRequestedEventHandler : EventHandlerBas
                 _logger.LogError("Something went wrong!");
 
                 await _messageBusProducerService.PublishAsync(
-                    nameof(OrderStockReservatedEvent),
-                    new OrderStockReservatedEvent(@event.OrderUniqueId, false),
+                    nameof(StockReservedEvent),
+                    new StockReservedEvent(@event.Id, false),
                     cancellationToken);
 
                 return;
             }
 
             await _messageBusProducerService.PublishAsync(
-                nameof(OrderStockReservatedEvent),
-                new OrderStockReservatedEvent(@event.OrderUniqueId, true),
+                nameof(StockReservedEvent),
+                new StockReservedEvent(@event.Id, true),
                 cancellationToken);
         }
         else
@@ -66,16 +66,16 @@ public sealed class OrderStockReservationRequestedEventHandler : EventHandlerBas
                 .ToList();
 
             await _messageBusProducerService.PublishAsync(
-                nameof(OrderStockReservatedEvent),
-                new OrderStockReservatedEvent(@event.OrderUniqueId, false, failedItemIds),
+                nameof(StockReservedEvent),
+                new StockReservedEvent(@event.Id, false, failedItemIds),
                 cancellationToken);
         }
     }
 
-    private async Task<ValidationResult<OrderStockReservationContext>> ValidateItemAsync(OrderStockReservationRequestedItemEvent orderItem, Guid orderId, CancellationToken cancellationToken)
+    private async Task<ValidationResult<StockReservationContext>> ValidateItemAsync(StockReservationRequestedItemEvent orderItem, Guid orderId, CancellationToken cancellationToken)
     {
         var context =
-            new OrderStockReservationContext(
+            new StockReservationContext(
                 orderItem.Id,
                 orderItem.Quantity,
                 orderId);

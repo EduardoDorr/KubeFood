@@ -7,21 +7,31 @@ namespace KubeFood.Inventory.API.Domain;
 public class InventoryItem : BaseEntity<int>
 {
     public string ProductId { get; private set; }
-    public string ProductName { get; private set; }
+    public string Name { get; private set; }
+    public InventoryItemCategory Category { get; private set; }
     public int QuantityAvailable { get; private set; }
     public int QuantityReserved { get; private set; }
-    public byte[] RowVersion { get; set; } = default!;
 
     public virtual ICollection<InventoryItemMovement> Movements { get; private set; } = [];
 
     private InventoryItem() { }
 
-    public InventoryItem(string productId, string productName, int initialQuantity = 0)
+    public InventoryItem(string productId, string name, InventoryItemCategory category, int initialQuantity = 0)
     {
         ProductId = productId;
-        ProductName = productName;
+        Name = name;
+        Category = category;
         QuantityAvailable = initialQuantity;
         QuantityReserved = 0;
+    }
+
+    public Result Update(string name, InventoryItemCategory category, bool active = true)
+    {
+        Name = name;
+        Category = category;
+        IsActive = active;
+
+        return Result.Ok();
     }
 
     public Result AddStock(int quantity, Guid? orderId = null)

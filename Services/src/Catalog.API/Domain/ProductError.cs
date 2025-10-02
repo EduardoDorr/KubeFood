@@ -13,6 +13,12 @@ public static class ProductError
     public static Error NameRequired =>
         new("ProductError.WithoutName", "Name field is required", ErrorType.Validation);
 
+    public static Error ValueInvalid =>
+        new("ProductError.ValueInvalid", "Value field must be greater than zero", ErrorType.Validation);
+
+    public static Error WeightInvalid =>
+        new("ProductError.WeightInvalid", "Name field must be greater than zero", ErrorType.Validation);
+
     public static Error CannotCreate =>
         new("ProductError.CannotCreate", "Something prevented from creating a new product", ErrorType.Failure);
 

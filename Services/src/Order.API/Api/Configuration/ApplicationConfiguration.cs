@@ -1,14 +1,14 @@
-﻿using System.Text.Json.Serialization;
-
-using KubeFood.Core;
-using KubeFood.Core.Middlewares;
+﻿using KubeFood.Core.Middlewares;
 using KubeFood.Core.Swagger;
+using KubeFood.Core.Telemetry;
 using KubeFood.Order.API.Api.Endpoints;
 using KubeFood.Order.API.Application;
 using KubeFood.Order.API.Domain;
 using KubeFood.Order.API.Infrastructure;
 
 using Microsoft.AspNetCore.Http.Json;
+
+using System.Text.Json.Serialization;
 
 using Unchase.Swashbuckle.AspNetCore.Extensions.Extensions;
 
@@ -18,7 +18,8 @@ public static class ApplicationConfiguration
 {
     public static WebApplicationBuilder ConfigureApplicationServices(this WebApplicationBuilder builder)
     {
-        builder.Services.AddMessageBusProducer();
+        builder.Host.AddSerilog(builder.Configuration);
+
         builder.Services.AddDomain(builder.Configuration);
         builder.Services.AddApplicationModule();
         builder.Services.AddInfrastructureModule(builder.Configuration);
@@ -50,7 +51,6 @@ public static class ApplicationConfiguration
             app.UseSwaggerUI();
         }
 
-        app.UseStaticFiles();
         //app.UseExceptionHandler();
         app.UseHttpsRedirection();
         app.MapOrderEndpoints();

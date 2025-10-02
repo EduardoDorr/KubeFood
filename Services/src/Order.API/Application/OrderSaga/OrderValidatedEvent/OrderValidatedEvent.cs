@@ -1,17 +1,17 @@
 ﻿using KubeFood.Core.Events;
 using KubeFood.Order.API.Domain;
 
-namespace KubeFood.Order.API.Domain.Events;
+namespace KubeFood.Order.API.Application.OrderSaga.OrderValidatedEvent;
 
 public sealed record OrderValidatedEvent(
-    Guid OrderUniqueId,
+    Guid Id,
     bool Valid,
-    List<OrderValidatedItemEvent> OrderItems,
-    List<string>? InvalidOrderItems = null)
+    List<OrderValidatedItemEvent> Items,
+    List<string>? InvalidItems = null)
     : IEvent;
 
 public sealed record OrderValidatedItemEvent(
-    string ProductId,
+    string Id,
     string Name,
     decimal Price,
     int Quantity);
@@ -21,7 +21,7 @@ public static class OrderValidatedItemEventExtensions
     public static OrderItem ToOrderItem(this OrderValidatedItemEvent itemValidated, int orderId)
         => new(
             orderId,
-            itemValidated.ProductId,
+            itemValidated.Id,
             itemValidated.Name,
             itemValidated.Price,
             itemValidated.Quantity);

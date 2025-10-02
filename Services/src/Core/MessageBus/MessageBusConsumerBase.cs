@@ -1,12 +1,11 @@
 ﻿using System.Text;
+using System.Text.Json;
 
 using KubeFood.Core.Options;
 
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-
-using Newtonsoft.Json;
 
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -23,14 +22,17 @@ public abstract class MessageBusConsumerBase<T> : BackgroundService
     private readonly ConnectionFactory _connectionFactory;
 
     protected readonly ILogger _logger;
-    protected readonly string _queue = typeof(T).Name;
+    protected readonly string _queue;
+    protected readonly MessageBusConsumerOptions? _consumerOptions;
 
     protected MessageBusConsumerBase(
         ILogger logger,
-        IOptions<RabbitMqConfigurationOptions> rabbitMqConfigurationOptions)
+        IOptions<RabbitMqConfigurationOptions> rabbitMqConfigurationOptions,
+        MessageBusConsumerOptions? consumerOptions = null)
     {
         _logger = logger;
         var rabbitMqConfigurationOptionsValue = rabbitMqConfigurationOptions.Value;
+        _consumerOptions = consumerOptions;
 
         _connectionFactory = new ConnectionFactory
         {
@@ -39,6 +41,8 @@ public abstract class MessageBusConsumerBase<T> : BackgroundService
             UserName = rabbitMqConfigurationOptionsValue.UserName,
             Password = rabbitMqConfigurationOptionsValue.Password
         };
+
+        _queue = _consumerOptions?.QueueName ?? typeof(T).Name;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -70,7 +74,7 @@ public abstract class MessageBusConsumerBase<T> : BackgroundService
 
                         _logger.LogInformation("Received message from queue {Queue}: {Message}", _queue, json);
 
-                        var message = JsonConvert.DeserializeObject<T>(json);
+                        var message = JsonSerializer.Deserialize<T>(json);
 
                         if (message is null)
                         {

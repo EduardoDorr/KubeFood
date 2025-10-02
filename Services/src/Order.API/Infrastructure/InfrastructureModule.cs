@@ -1,13 +1,18 @@
 ﻿using KubeFood.Core;
+using KubeFood.Core.Options;
 using KubeFood.Core.Persistence.BoxMessages;
 using KubeFood.Core.Persistence.Interceptors;
 using KubeFood.Core.Persistence.UnitOfWork;
+using KubeFood.Core.Telemetry;
+using KubeFood.Order.API.Application.OrderSaga.OrderStockReserved;
+using KubeFood.Order.API.Application.OrderSaga.OrderValidatedEvent;
 using KubeFood.Order.API.Domain;
-using KubeFood.Order.API.Domain.Events;
 using KubeFood.Order.API.Infrastructure.Persistence;
 using KubeFood.Order.API.Infrastructure.Persistence.Repositories;
 
 using Microsoft.EntityFrameworkCore;
+
+using MongoDB.Bson;
 
 namespace KubeFood.Order.API.Infrastructure;
 
@@ -19,7 +24,9 @@ public static class InfrastructureModule
             .AddDbContext(configuration)
             .AddRepositories()
             .AddBackgroundJobs()
-            .AddMessageBus();
+            .AddMessageBus()
+            .AddOptions(configuration)
+            .AddOpenTelemetry(configuration);
 
         return services;
     }
@@ -59,11 +66,24 @@ public static class InfrastructureModule
         return services;
     }
 
+    private static IServiceCollection AddOptions(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.Configure<InboxMessageOptions>(configuration.GetSection(InboxMessageOptions.Name));
+        services.Configure<OutboxMessageOptions>(configuration.GetSection(OutboxMessageOptions.Name));
+        services.Configure<OpenTelemetryOptions>(configuration.GetSection(OpenTelemetryOptions.Name));
+        services.Configure<RabbitMqConfigurationOptions>(configuration.GetSection(RabbitMqConfigurationOptions.Name));
+
+        return services;
+    }
+
     private static IServiceCollection AddMessageBus(this IServiceCollection services)
     {
         services.AddMessageBusProducer();
-        services.AddMessageBusConsumerInboxService<OrderValidatedEvent, int, OrderDbContext>();
-        services.AddMessageBusConsumerInboxService<OrderStockReservatedEvent, int, OrderDbContext>();
+        services.AddMessageBusProducerOutboxService<int, OrderDbContext>();
+        services.AddMessageBusConsumerInboxService<OrderValidatedEvent, int, OrderDbContext>(options
+            => { options.QueueName = "ProductValidatedEvent"; });
+        services.AddMessageBusConsumerInboxService<OrderStockReservedEvent, int, OrderDbContext>(options
+            => { options.QueueName = "StockReservedEvent"; });
 
         return services;
     }

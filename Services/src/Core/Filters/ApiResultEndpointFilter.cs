@@ -31,9 +31,9 @@ public sealed class ApiResultEndpointFilter : IEndpointFilter
         }
 
         if (type == typeof(Result))
-        {
-            return ((Result)result).ToApiResult();
-        }
+            return ((Result)result)
+                .ToApiResult()
+                .ToResult();
 
         return result;
     }

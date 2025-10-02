@@ -3,7 +3,7 @@ using KubeFood.Core.Persistence.UnitOfWork;
 using KubeFood.Order.API.Domain;
 using KubeFood.Order.API.Domain.Events;
 
-namespace KubeFood.Order.API.Application.OrderSaga;
+namespace KubeFood.Order.API.Application.OrderSaga.OrderValidatedEvent;
 
 public class OrderValidatedEventHandler : EventHandlerBase<OrderValidatedEvent>
 {
@@ -23,18 +23,18 @@ public class OrderValidatedEventHandler : EventHandlerBase<OrderValidatedEvent>
     protected override async Task ExecuteAsync(OrderValidatedEvent message, CancellationToken cancellationToken = default)
     {
         var order = await _orderRepository
-            .GetByUniqueIdAsync(message.OrderUniqueId, cancellationToken);
+            .GetByUniqueIdAsync(message.Id, cancellationToken);
 
         if (order is null)
         {
-            _logger.LogError("Order with ID {OrderId} not found.", message.OrderUniqueId);
+            _logger.LogError("Order with ID {OrderId} not found.", message.Id);
             return;
         }
 
         if (message.Valid)
         {
             order.SetStatus(OrderStatus.ProductsValidated);
-            order.AddItems(message.OrderItems.ToOrderItem(order.Id).ToList());
+            order.AddItems(message.Items.ToOrderItem(order.Id).ToList());
 
             var orderStockReservationRequestedEvent =
                 new OrderStockReservationRequestedEvent(
@@ -48,7 +48,7 @@ public class OrderValidatedEventHandler : EventHandlerBase<OrderValidatedEvent>
         }
         else
         {
-            var invalidItems = string.Join(",", message.InvalidOrderItems!);
+            var invalidItems = string.Join(",", message.InvalidItems!);
 
             _logger.LogError("Order has invalid items: {InvalidItems}", invalidItems);
 

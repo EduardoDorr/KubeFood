@@ -39,5 +39,5 @@ public abstract class BaseEntity
 
 public abstract class BaseEntity<TId> : BaseEntity
 {
-    public TId Id { get; private set; }    
+    public TId Id { get; protected set; }    
 }

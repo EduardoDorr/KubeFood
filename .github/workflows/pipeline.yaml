@@ -1,0 +1,35 @@
+name: Orchestrate Build of APIs
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  catalog:
+    uses: ./.github/workflows/docker-build.yaml
+    secrets: inherit
+    with:
+      context: Services/src
+      dockerfile: Catalog.API/Dockerfile
+      docker_tag: latest
+      service_name: catalog-api
+  
+  order:
+    uses: ./.github/workflows/docker-build.yaml
+    secrets: inherit
+    with:
+      context: Services/src
+      dockerfile: Order.API/Dockerfile
+      docker_tag: latest
+      service_name: order-api
+
+  inventory:
+    uses: ./.github/workflows/docker-build.yaml
+    secrets: inherit
+    with:
+      context: Services/src
+      dockerfile: Inventory.API/Dockerfile
+      docker_tag: latest
+      service_name: inventory-api

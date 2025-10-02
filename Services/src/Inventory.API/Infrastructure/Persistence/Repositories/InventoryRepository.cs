@@ -19,7 +19,7 @@ public class InventoryRepository : IInventoryRepository
         var items = _context.Inventory.AsNoTracking();
 
         if (!string.IsNullOrWhiteSpace(productName))
-            items = items.Where(i => i.ProductName == productName);
+            items = items.Where(i => i.Name == productName);
 
         return await items
             .GetPagedAsync(page, pageSize, cancellationToken);

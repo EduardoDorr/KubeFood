@@ -3,15 +3,15 @@ using KubeFood.Core.Persistence.UnitOfWork;
 using KubeFood.Order.API.Domain;
 using KubeFood.Order.API.Domain.Events;
 
-namespace KubeFood.Order.API.Application.OrderSaga;
+namespace KubeFood.Order.API.Application.OrderSaga.OrderStockReserved;
 
-public class OrderStockReservatedEventHandler : EventHandlerBase<OrderStockReservatedEvent>
+public class OrderStockReservedEventHandler : EventHandlerBase<OrderStockReservedEvent>
 {
     private readonly IOrderRepository _orderRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public OrderStockReservatedEventHandler(
-        ILogger<OrderStockReservatedEventHandler> logger,
+    public OrderStockReservedEventHandler(
+        ILogger<OrderStockReservedEventHandler> logger,
         IOrderRepository orderRepository,
         IUnitOfWork unitOfWork)
         : base(logger)
@@ -20,14 +20,14 @@ public class OrderStockReservatedEventHandler : EventHandlerBase<OrderStockReser
         _unitOfWork = unitOfWork;
     }
 
-    protected override async Task ExecuteAsync(OrderStockReservatedEvent @event, CancellationToken cancellationToken = default)
+    protected override async Task ExecuteAsync(OrderStockReservedEvent @event, CancellationToken cancellationToken = default)
     {
         var order = await _orderRepository
-            .GetByUniqueIdAsync(@event.OrderUniqueId, cancellationToken);
+            .GetByUniqueIdAsync(@event.Id, cancellationToken);
 
         if (order is null)
         {
-            _logger.LogError("Order with ID {OrderId} not found.", @event.OrderUniqueId);
+            _logger.LogError("Order with ID {OrderId} not found.", @event.Id);
             return;
         }
 

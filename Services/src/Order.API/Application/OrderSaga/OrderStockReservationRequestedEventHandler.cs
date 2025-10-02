@@ -18,8 +18,6 @@ public class OrderStockReservationRequestedEventHandler : EventHandlerBase<Order
 
     protected override async Task ExecuteAsync(OrderStockReservationRequestedEvent @event, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation($"Handling {GetType().Name}");
-
         await _messageBusProducerService
             .PublishAsync(nameof(OrderStockReservationRequestedEvent), @event, cancellationToken);
     }

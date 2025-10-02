@@ -1,9 +1,13 @@
 ﻿using KubeFood.Core;
+using KubeFood.Core.Options;
 using KubeFood.Core.Persistence.BoxMessages;
 using KubeFood.Core.Persistence.Interceptors;
 using KubeFood.Core.Persistence.UnitOfWork;
+using KubeFood.Core.Telemetry;
+using KubeFood.Inventory.API.Application.ItemCreated;
+using KubeFood.Inventory.API.Application.ItemUpdated;
+using KubeFood.Inventory.API.Application.StockReservationRequested;
 using KubeFood.Inventory.API.Domain;
-using KubeFood.Inventory.API.Domain.Events;
 using KubeFood.Inventory.API.Infrastructure.Persistence;
 using KubeFood.Inventory.API.Infrastructure.Persistence.Repositories;
 
@@ -19,7 +23,9 @@ public static class InfrastructureModule
             .AddDbContext(configuration)
             .AddRepositories()
             .AddBackgroundJobs()
-            .AddMessageBus();
+            .AddMessageBus()
+            .AddOptions(configuration)
+            .AddOpenTelemetry(configuration);
 
         return services;
     }
@@ -59,10 +65,25 @@ public static class InfrastructureModule
         return services;
     }
 
+    private static IServiceCollection AddOptions(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.Configure<InboxMessageOptions>(configuration.GetSection(InboxMessageOptions.Name));
+        services.Configure<OutboxMessageOptions>(configuration.GetSection(OutboxMessageOptions.Name));
+        services.Configure<OpenTelemetryOptions>(configuration.GetSection(OpenTelemetryOptions.Name));
+        services.Configure<RabbitMqConfigurationOptions>(configuration.GetSection(RabbitMqConfigurationOptions.Name));
+
+        return services;
+    }
+
     private static IServiceCollection AddMessageBus(this IServiceCollection services)
     {
         services.AddMessageBusProducer();
-        services.AddMessageBusConsumerInboxService<OrderStockReservationRequestedEvent, int, InventoryDbContext>();
+        services.AddMessageBusConsumerInboxService<ItemCreatedEvent, int, InventoryDbContext>(options
+            => { options.QueueName = "ProductCreatedEvent"; });
+        services.AddMessageBusConsumerInboxService<ItemUpdatedEvent, int, InventoryDbContext>(options
+            => { options.QueueName = "ProductUpdatedEvent"; });
+        services.AddMessageBusConsumerInboxService<StockReservationRequestedEvent, int, InventoryDbContext>(options
+            => { options.QueueName = "OrderStockReservationRequestedEvent"; });
 
         return services;
     }

@@ -14,7 +14,7 @@ internal class OrderItemConfiguration : BaseEntityConfiguration<Domain.OrderItem
         builder.Property(p => p.OrderId)
                .IsRequired();
 
-        builder.Property(p => p.ProductId)
+        builder.Property(p => p.Id)
                .IsRequired();
 
         builder.Property(p => p.Name)
