@@ -1,7 +1,13 @@
-using Delivery.Worker;
+using KubeFood.Core.Telemetry;
+using KubeFood.Delivery.Worker.Application;
+using KubeFood.Delivery.Worker.Infrastructure;
+
+using Serilog;
 
 var builder = Host.CreateApplicationBuilder(args);
-builder.Services.AddHostedService<Worker>();
+builder.Logging.AddSerilog(builder.Configuration);
+builder.Services.AddApplicationModule();
+builder.Services.AddInfrastructureModule(builder.Configuration);
 
 var host = builder.Build();
-host.Run();
+await host.RunAsync();

@@ -3,5 +3,5 @@
 namespace KubeFood.Order.API.Domain.Events;
 
 public sealed record OrderPaymentRequestedEvent(
-    Guid OrderUniqueId)
+    Guid Id)
     : IDomainEvent;

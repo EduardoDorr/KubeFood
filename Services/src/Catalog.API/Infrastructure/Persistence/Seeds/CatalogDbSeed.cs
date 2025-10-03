@@ -21,55 +21,54 @@ public static class CatalogDbSeed
 
     private static async Task SeedProductsAsync(CatalogDbContext context)
     {
-        var products = new List<Product>
-{
-            new(
-                name: "Cheeseburger Clássico",
-                description: "Pão brioche, hambúrguer 150g, queijo cheddar, alface, tomate, maionese especial.",
-                category: ProductCategory.Lanche,
-                value: 24.90m,
-                weight: 250.0m
-            ),
-            new(
-                name: "X-Bacon Supremo",
-                description: "Pão australiano, hambúrguer 200g, queijo prato, bacon crocante, cebola caramelizada e barbecue.",
-                category: ProductCategory.Lanche,
-                value: 29.90m,
-                weight: 320.0m
-            ),
-            new(
-                name: "Batata Frita com Cheddar e Bacon",
-                description: "Batata frita crocante coberta com queijo cheddar derretido e pedaços de bacon.",
-                category: ProductCategory.Acompanhamento,
-                value: 18.50m,
-                weight: 180.0m
-            ),
-            new(
-                name: "Nuggets de Frango (8 unidades)",
-                description: "Nuggets crocantes de frango com molho barbecue ou honey mustard.",
-                category: ProductCategory.Acompanhamento,
-                value: 14.00m,
-                weight: 150.0m
-            ),
-            new(
-                name: "Milkshake de Chocolate",
-                description: "Milkshake cremoso de chocolate com chantilly e calda extra.",
-                category: ProductCategory.Bebida,
-                value: 17.00m,
-                weight: 400.0m
-            ),
-            new(
-                name: "Refrigerante Lata (350ml)",
-                description: "Escolha entre Coca-Cola, Guaraná ou Sprite.",
-                category: ProductCategory.Bebida,
-                value: 6.00m,
-                weight: 350.0m
-            )
-        };
+        var products =
+            new List<Product>
+            {
+                new(
+                    name: "Cheeseburger Clássico",
+                    description: "Pão brioche, hambúrguer 150g, queijo cheddar, alface, tomate, maionese especial.",
+                    category: ProductCategory.Lanche,
+                    value: 24.90m,
+                    weight: 250.0m
+                ),
+                new(
+                    name: "X-Bacon Supremo",
+                    description: "Pão australiano, hambúrguer 200g, queijo prato, bacon crocante, cebola caramelizada e barbecue.",
+                    category: ProductCategory.Lanche,
+                    value: 29.90m,
+                    weight: 320.0m
+                ),
+                new(
+                    name: "Batata Frita com Cheddar e Bacon",
+                    description: "Batata frita crocante coberta com queijo cheddar derretido e pedaços de bacon.",
+                    category: ProductCategory.Acompanhamento,
+                    value: 18.50m,
+                    weight: 180.0m
+                ),
+                new(
+                    name: "Nuggets de Frango (8 unidades)",
+                    description: "Nuggets crocantes de frango com molho barbecue ou honey mustard.",
+                    category: ProductCategory.Acompanhamento,
+                    value: 14.00m,
+                    weight: 150.0m
+                ),
+                new(
+                    name: "Milkshake de Chocolate",
+                    description: "Milkshake cremoso de chocolate com chantilly e calda extra.",
+                    category: ProductCategory.Bebida,
+                    value: 17.00m,
+                    weight: 400.0m
+                ),
+                new(
+                    name: "Refrigerante Lata (350ml)",
+                    description: "Escolha entre Coca-Cola, Guaraná ou Sprite.",
+                    category: ProductCategory.Bebida,
+                    value: 6.00m,
+                    weight: 350.0m
+                )
+            };
 
-        foreach (var product in products)
-            await context.Products.AddAsync(product);
-
+        await context.Products.AddRangeAsync(products);
         await context.SaveChangesAsync();
     }
 }

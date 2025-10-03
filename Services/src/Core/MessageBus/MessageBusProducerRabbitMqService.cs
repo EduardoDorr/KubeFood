@@ -1,18 +1,20 @@
-﻿using System.Text;
-using System.Text.Json;
+﻿using KubeFood.Core.Events;
+using KubeFood.Core.Options;
 
 using Microsoft.Extensions.Options;
 
 using RabbitMQ.Client;
-using KubeFood.Core.Options;
+
+using System.Text;
+using System.Text.Json;
 
 namespace KubeFood.Core.MessageBus;
 
-public class MessageBusProducerService : IMessageBusProducerService
+public class MessageBusProducerRabbitMqService : IMessageBusProducerService
 {
     private readonly ConnectionFactory _connectionFactory;
 
-    public MessageBusProducerService(IOptions<RabbitMqConfigurationOptions> rabbitMqConfigurationOptions)
+    public MessageBusProducerRabbitMqService(IOptions<RabbitMqConfigurationOptions> rabbitMqConfigurationOptions)
     {
         var rabbitMqConfigurationOptionsValue = rabbitMqConfigurationOptions.Value;
 
@@ -25,7 +27,7 @@ public class MessageBusProducerService : IMessageBusProducerService
         };
     }
 
-    public async Task PublishAsync<T>(string queue, T @event, CancellationToken cancellationToken = default)
+    public async Task PublishAsync<TEvent>(TEvent @event, string? queue = null, CancellationToken cancellationToken = default)
     {
         using var connection = await _connectionFactory.CreateConnectionAsync(cancellationToken);
         using var channel = await connection.CreateChannelAsync(cancellationToken: cancellationToken);
@@ -34,7 +36,7 @@ public class MessageBusProducerService : IMessageBusProducerService
 
         await channel.QueueDeclareAsync
             (
-                queue: queue,
+                queue: queue ?? typeof(TEvent).Name,
                 durable: false,
                 exclusive: false,
                 autoDelete: true,
@@ -47,7 +49,7 @@ public class MessageBusProducerService : IMessageBusProducerService
         await channel.BasicPublishAsync
             (
                 exchange: "",
-                routingKey: queue,
+                routingKey: queue ?? typeof(TEvent).Name,
                 mandatory: true,
                 basicProperties: properties,
                 body: body,
@@ -55,7 +57,7 @@ public class MessageBusProducerService : IMessageBusProducerService
             );
     }
 
-    private static byte[] GetBodyMessage<T>(T @event)
+    private static byte[] GetBodyMessage<TEvent>(TEvent @event)
     {
         var eventMessageJsonString = JsonSerializer.Serialize(@event);
         var body = Encoding.UTF8.GetBytes(eventMessageJsonString);

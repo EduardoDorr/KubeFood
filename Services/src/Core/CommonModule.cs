@@ -46,7 +46,7 @@ public static class CommonModule
 
     public static IServiceCollection AddMessageBusProducer(this IServiceCollection services)
     {
-        services.AddScoped<IMessageBusProducerService, MessageBusProducerService>();
+        services.AddScoped<IMessageBusProducerService, MessageBusProducerRabbitMqService>();
 
         return services;
     }

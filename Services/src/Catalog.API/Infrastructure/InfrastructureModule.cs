@@ -33,7 +33,7 @@ public static class InfrastructureModule
     private static IServiceCollection AddDbContext(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<CatalogDbContext>(options =>
-            options.UseMongoDB(configuration.GetConnectionString("CatalogDbConnection"), "KubeFoodDb")
+            options.UseMongoDB(configuration.GetConnectionString("CatalogDbConnection"), "CatalogDb")
                 .AddInterceptors(new PublishDomainEventsToOutBoxMessagesInterceptor<ObjectId>())
                 .AddInterceptors(new UpdateAuditableInterceptor<ObjectId>()));
 
@@ -69,8 +69,9 @@ public static class InfrastructureModule
     private static IServiceCollection AddMessageBus(this IServiceCollection services)
     {
         services.AddMessageBusProducer();
-        services.AddMessageBusConsumerInboxService<ProductValidationRequestedEvent, ObjectId, CatalogDbContext>(options
-            => { options.QueueName = "OrderRequestedEvent"; });
+        services.AddMessageBusProducerOutboxService<ObjectId, CatalogDbContext>();
+        services.AddMessageBusConsumerInboxService<ProductValidationRequestedEvent, ObjectId, CatalogDbContext>(
+            options => { options.QueueName = "OrderRequestedEvent"; });
 
         return services;
     }

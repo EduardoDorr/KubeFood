@@ -17,12 +17,12 @@ public sealed class MessageBusProducerOutboxService<TId, TDbContext> : IMessageB
         _dbContext = dbContext;
     }
 
-    public async Task PublishAsync<TEvent>(TEvent @event, string? queue = null, CancellationToken cancellationToken = default) where TEvent : IEvent
+    public async Task PublishAsync<TEvent>(TEvent @event, string? queue = null, CancellationToken cancellationToken = default)
     {
         var outboxEvent =
             new OutboxEvent(
                 queue ?? typeof(TEvent).Name,
-                @event);
+                @event!);
 
         var outboxMessage =
             new OutboxMessage<TId>

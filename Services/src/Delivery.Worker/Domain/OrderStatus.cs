@@ -1,15 +1,7 @@
-﻿namespace KubeFood.Order.API.Domain;
+﻿namespace KubeFood.Delivery.Worker.Domain;
 
 public enum OrderStatus
 {
-    Pending = 0,
-
-    ProductsValidation = 1,
-    ProductsInvalid = 2,
-
-    StockValidation = 3,
-    StockUnavailable = 4,
-
     PaymentPending = 5,
     PaymentFailed = 6,
     PaymentConfirmed = 7,
@@ -19,8 +11,6 @@ public enum OrderStatus
     Delivered = 10,
     Completed = 11,
 
-    CanceledByCustomer = 12,
-    CanceledByRestaurant = 13,
     Expired = 14,
     Failed = 15,
 }

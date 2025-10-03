@@ -6,11 +6,11 @@ namespace KubeFood.Catalog.API.Application.ProductCreated;
 
 public sealed class ProductCreatedEventHandler : EventHandlerBase<ProductCreatedEvent>
 {
-    private readonly IMessageBusProducerService _messageBusProducerService;
+    private readonly IMessageBusProducerOutboxService _messageBusProducerService;
 
     public ProductCreatedEventHandler(
         ILogger<ProductCreatedEventHandler> logger,
-        IMessageBusProducerService messageBusProducerService)
+        IMessageBusProducerOutboxService messageBusProducerService)
         : base(logger)
     {
         _messageBusProducerService = messageBusProducerService;
@@ -19,6 +19,6 @@ public sealed class ProductCreatedEventHandler : EventHandlerBase<ProductCreated
     protected override async Task ExecuteAsync(ProductCreatedEvent @event, CancellationToken cancellationToken = default)
     {
         await _messageBusProducerService
-            .PublishAsync(nameof(ProductCreatedEvent), @event, cancellationToken);
+            .PublishAsync(@event, nameof(ProductCreatedEvent), cancellationToken);
     }
 }

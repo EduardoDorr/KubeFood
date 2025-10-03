@@ -47,7 +47,6 @@ public class InventoryItem : BaseEntity<int>
         return Result.Ok();
     }
 
-
     public Result RemoveStock(int quantity, Guid? orderId = null)
     {
         var validation = ValidateQuantityAndAvailability(quantity);
@@ -100,7 +99,7 @@ public class InventoryItem : BaseEntity<int>
         Movements.Add(new(Id, quantity, InventoryMovementType.ConfirmReserve, orderId));
 
         return Result.Ok();
-    }    
+    }
 
     private static Result ValidateQuantity(int quantity)
     => ResultValidation.ValidateFailFast(

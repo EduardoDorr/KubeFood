@@ -1,7 +1,7 @@
 ﻿using KubeFood.Core.Events;
 using KubeFood.Order.API.Domain;
 
-namespace KubeFood.Order.API.Application.OrderSaga.OrderValidatedEvent;
+namespace KubeFood.Order.API.Application.OrderOrchestration.OrderValidatedEvent;
 
 public sealed record OrderValidatedEvent(
     Guid Id,

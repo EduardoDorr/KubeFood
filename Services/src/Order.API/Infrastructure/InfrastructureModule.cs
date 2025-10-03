@@ -4,15 +4,14 @@ using KubeFood.Core.Persistence.BoxMessages;
 using KubeFood.Core.Persistence.Interceptors;
 using KubeFood.Core.Persistence.UnitOfWork;
 using KubeFood.Core.Telemetry;
-using KubeFood.Order.API.Application.OrderSaga.OrderStockReserved;
-using KubeFood.Order.API.Application.OrderSaga.OrderValidatedEvent;
+using KubeFood.Order.API.Application.OrderOrchestration.OrderStatusChanged;
+using KubeFood.Order.API.Application.OrderOrchestration.OrderStockReserved;
+using KubeFood.Order.API.Application.OrderOrchestration.OrderValidatedEvent;
 using KubeFood.Order.API.Domain;
 using KubeFood.Order.API.Infrastructure.Persistence;
 using KubeFood.Order.API.Infrastructure.Persistence.Repositories;
 
 using Microsoft.EntityFrameworkCore;
-
-using MongoDB.Bson;
 
 namespace KubeFood.Order.API.Infrastructure;
 
@@ -80,10 +79,11 @@ public static class InfrastructureModule
     {
         services.AddMessageBusProducer();
         services.AddMessageBusProducerOutboxService<int, OrderDbContext>();
-        services.AddMessageBusConsumerInboxService<OrderValidatedEvent, int, OrderDbContext>(options
-            => { options.QueueName = "ProductValidatedEvent"; });
-        services.AddMessageBusConsumerInboxService<OrderStockReservedEvent, int, OrderDbContext>(options
-            => { options.QueueName = "StockReservedEvent"; });
+        services.AddMessageBusConsumerInboxService<OrderValidatedEvent, int, OrderDbContext>(
+            options => { options.QueueName = "ProductValidatedEvent"; });
+        services.AddMessageBusConsumerInboxService<OrderStockReservedEvent, int, OrderDbContext>(
+            options => { options.QueueName = "StockReservedEvent"; });
+        services.AddMessageBusConsumerInboxService<OrderStatusChangedEvent, int, OrderDbContext>();
 
         return services;
     }

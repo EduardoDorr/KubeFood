@@ -1,6 +1,6 @@
 ﻿using KubeFood.Core.Events;
 
-namespace KubeFood.Order.API.Application.OrderSaga.OrderStockReserved;
+namespace KubeFood.Order.API.Application.OrderOrchestration.OrderStockReserved;
 
 public sealed record OrderStockReservedEvent(
     Guid Id,

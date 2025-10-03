@@ -3,7 +3,7 @@ using KubeFood.Core.Persistence.UnitOfWork;
 using KubeFood.Order.API.Domain;
 using KubeFood.Order.API.Domain.Events;
 
-namespace KubeFood.Order.API.Application.OrderSaga.OrderStockReserved;
+namespace KubeFood.Order.API.Application.OrderOrchestration.OrderStockReserved;
 
 public class OrderStockReservedEventHandler : EventHandlerBase<OrderStockReservedEvent>
 {
@@ -33,7 +33,7 @@ public class OrderStockReservedEventHandler : EventHandlerBase<OrderStockReserve
 
         if (@event.IsStockReservated)
         {
-            order.SetStatus(OrderStatus.StockAvailable);
+            order.SetStatus(OrderStatus.PaymentPending);
 
             var orderPaymentRequestedEvent =
                 new OrderPaymentRequestedEvent(

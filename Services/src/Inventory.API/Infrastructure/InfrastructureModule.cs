@@ -78,6 +78,7 @@ public static class InfrastructureModule
     private static IServiceCollection AddMessageBus(this IServiceCollection services)
     {
         services.AddMessageBusProducer();
+        services.AddMessageBusProducerOutboxService<int, InventoryDbContext>();
         services.AddMessageBusConsumerInboxService<ItemCreatedEvent, int, InventoryDbContext>(options
             => { options.QueueName = "ProductCreatedEvent"; });
         services.AddMessageBusConsumerInboxService<ItemUpdatedEvent, int, InventoryDbContext>(options

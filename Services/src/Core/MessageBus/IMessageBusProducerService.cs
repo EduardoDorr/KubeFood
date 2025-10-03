@@ -1,6 +1,8 @@
-﻿namespace KubeFood.Core.MessageBus;
+﻿using KubeFood.Core.Events;
+
+namespace KubeFood.Core.MessageBus;
 
 public interface IMessageBusProducerService
 {
-    Task PublishAsync<T>(string queue, T @event, CancellationToken cancellationToken = default);
+    Task PublishAsync<TEvent>(TEvent @event, string? queue = null, CancellationToken cancellationToken = default);
 }

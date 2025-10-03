@@ -13,13 +13,13 @@ public sealed class StockReservationRequestedEventHandler : EventHandlerBase<Sto
 {
     private readonly IInventoryRepository _inventoryRepository;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IMessageBusProducerService _messageBusProducerService;
+    private readonly IMessageBusProducerOutboxService _messageBusProducerService;
 
     public StockReservationRequestedEventHandler(
         ILogger<StockReservationRequestedEventHandler> logger,
         IInventoryRepository inventoryRepository,
         IUnitOfWork unitOfWork,
-        IMessageBusProducerService messageBusProducerService)
+        IMessageBusProducerOutboxService messageBusProducerService)
         : base(logger)
     {
         _inventoryRepository = inventoryRepository;
@@ -46,16 +46,16 @@ public sealed class StockReservationRequestedEventHandler : EventHandlerBase<Sto
                 _logger.LogError("Something went wrong!");
 
                 await _messageBusProducerService.PublishAsync(
-                    nameof(StockReservedEvent),
                     new StockReservedEvent(@event.Id, false),
+                    nameof(StockReservedEvent),
                     cancellationToken);
 
                 return;
             }
 
             await _messageBusProducerService.PublishAsync(
-                nameof(StockReservedEvent),
                 new StockReservedEvent(@event.Id, true),
+                nameof(StockReservedEvent),
                 cancellationToken);
         }
         else
@@ -66,8 +66,8 @@ public sealed class StockReservationRequestedEventHandler : EventHandlerBase<Sto
                 .ToList();
 
             await _messageBusProducerService.PublishAsync(
-                nameof(StockReservedEvent),
                 new StockReservedEvent(@event.Id, false, failedItemIds),
+                nameof(StockReservedEvent),
                 cancellationToken);
         }
     }

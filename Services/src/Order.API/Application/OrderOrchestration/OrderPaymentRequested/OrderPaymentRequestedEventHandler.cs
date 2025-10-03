@@ -2,15 +2,15 @@
 using KubeFood.Core.MessageBus;
 using KubeFood.Order.API.Domain.Events;
 
-namespace KubeFood.Order.API.Application.OrderSaga;
+namespace KubeFood.Order.API.Application.OrderOrchestration.OrderPaymentRequested;
 
 public class OrderPaymentRequestedEventHandler : EventHandlerBase<OrderPaymentRequestedEvent>
 {
-    private readonly IMessageBusProducerService _messageBusProducerService;
+    private readonly IMessageBusProducerOutboxService _messageBusProducerService;
 
     public OrderPaymentRequestedEventHandler(
         ILogger<OrderPaymentRequestedEventHandler> logger,
-        IMessageBusProducerService messageBusProducerService)
+        IMessageBusProducerOutboxService messageBusProducerService)
         : base(logger)
     {
         _messageBusProducerService = messageBusProducerService;
@@ -21,6 +21,6 @@ public class OrderPaymentRequestedEventHandler : EventHandlerBase<OrderPaymentRe
         _logger.LogInformation("Handling {HandlerName}", GetType().Name);
 
         await _messageBusProducerService
-            .PublishAsync(nameof(OrderPaymentRequestedEvent), @event, cancellationToken);
+            .PublishAsync(@event, nameof(OrderPaymentRequestedEvent), cancellationToken);
     }
 }

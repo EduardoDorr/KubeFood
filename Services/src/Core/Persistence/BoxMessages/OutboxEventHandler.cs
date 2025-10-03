@@ -19,6 +19,6 @@ public sealed class OutboxEventHandler : EventHandlerBase<OutboxEvent>
     protected override async Task ExecuteAsync(OutboxEvent @event, CancellationToken cancellationToken = default)
     {
         await _messageBusProducerService
-            .PublishAsync(@event.Queue, @event.Event, cancellationToken);
+            .PublishAsync(@event.Event, @event.Queue, cancellationToken);
     }
 }

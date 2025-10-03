@@ -11,12 +11,12 @@ namespace KubeFood.Catalog.API.Application.ProductValidationRequested;
 public class ProductValidationRequestedEventHandler : EventHandlerBase<ProductValidationRequestedEvent>
 {
     private readonly IProductRepository _productRepository;
-    private readonly IMessageBusProducerService _messageBusProducerService;
+    private readonly IMessageBusProducerOutboxService _messageBusProducerService;
 
     public ProductValidationRequestedEventHandler(
         ILogger<ProductValidationRequestedEventHandler> logger,
         IProductRepository productRepository,
-        IMessageBusProducerService messageBusProducerService)
+        IMessageBusProducerOutboxService messageBusProducerService)
         : base(logger)
     {
         _productRepository = productRepository;
@@ -72,6 +72,6 @@ public class ProductValidationRequestedEventHandler : EventHandlerBase<ProductVa
         }
 
         await _messageBusProducerService
-            .PublishAsync(nameof(ProductValidatedEvent), productValidatedEvent, cancellationToken);
+            .PublishAsync(productValidatedEvent, nameof(ProductValidatedEvent), cancellationToken);
     }
 }

@@ -1,10 +1,19 @@
 ﻿using KubeFood.Catalog.API.Application.ProductValidationRequested;
+using KubeFood.Core.Events;
 using KubeFood.Core.Helpers;
 
 namespace KubeFood.Catalog.API.Domain.Events;
 
-public sealed record ProductValidatedEvent(Guid Id, bool Valid, List<ProductValidatedItemEvent> Items, List<string>? InvalidItems = null);
-public sealed record ProductValidatedItemEvent(string Id, string Name, decimal Price, int Quantity);
+public sealed record ProductValidatedEvent(
+    Guid Id,
+    bool Valid,
+    List<ProductValidatedItemEvent> Items,
+    List<string>? InvalidItems = null) : IEvent;
+public sealed record ProductValidatedItemEvent(
+    string Id,
+    string Name,
+    decimal Price,
+    int Quantity);
 
 public static class ProductValidatedItemExtensions
 {

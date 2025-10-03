@@ -1,4 +1,4 @@
-namespace Delivery.Worker;
+namespace KubeFood.Delivery.Worker;
 
 public class Worker : BackgroundService
 {
