@@ -14,7 +14,7 @@ jobs:
       context: Services/src
       dockerfile: Catalog.API/Dockerfile
       docker_tag: latest
-      service_name: catalog-api
+      service_name: kubefood-catalog-api
   
   order:
     uses: ./.github/workflows/docker-build.yaml
@@ -23,7 +23,7 @@ jobs:
       context: Services/src
       dockerfile: Order.API/Dockerfile
       docker_tag: latest
-      service_name: order-api
+      service_name: kubefood-order-api
 
   inventory:
     uses: ./.github/workflows/docker-build.yaml
@@ -32,4 +32,4 @@ jobs:
       context: Services/src
       dockerfile: Inventory.API/Dockerfile
       docker_tag: latest
-      service_name: inventory-api
+      service_name: kubefood-inventory-api
