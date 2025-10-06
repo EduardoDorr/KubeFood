@@ -1,12 +1,12 @@
 ﻿using KubeFood.Core.Events;
 using KubeFood.Core.MessageBus;
 using KubeFood.Core.Persistence.BoxMessages;
+using KubeFood.Core.RabbitMq;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 using System.Reflection;
-using System.Reflection.Metadata;
 
 namespace KubeFood.Core;
 
@@ -40,38 +40,6 @@ public static class CommonModule
 
         if (!services.Any(sd => sd.ServiceType == typeof(IEventHandler<OutboxEvent>)))
             services.AddScoped<IEventHandler<OutboxEvent>, OutboxEventHandler>();
-
-        return services;
-    }
-
-    public static IServiceCollection AddMessageBusProducer(this IServiceCollection services)
-    {
-        services.AddScoped<IMessageBusProducerService, MessageBusProducerRabbitMqService>();
-
-        return services;
-    }
-
-    public static IServiceCollection AddMessageBusConsumerInboxService<TEvent, TId, TDbContext>(
-        this IServiceCollection services,
-        Action<MessageBusConsumerOptions>? consumerOptions = null)
-        where TDbContext : DbContext
-    {
-        var options = new MessageBusConsumerOptions();
-        consumerOptions?.Invoke(options);
-
-        services.AddHostedService(sp =>
-            ActivatorUtilities.CreateInstance<MessageBusConsumerInboxService<TEvent, TId, TDbContext>>(sp, options)
-        );
-
-        return services;
-    }
-
-    public static IServiceCollection AddMessageBusConsumerEvent<TEvent, THandler>(this IServiceCollection services)
-        where THandler : class, IMessageBusConsumerEventHandler<TEvent>
-        where TEvent : IEvent
-    {
-        services.AddHostedService<MessageBusConsumerEvent<TEvent>>();
-        services.AddScoped<IMessageBusConsumerEventHandler<TEvent>, THandler>();
 
         return services;
     }

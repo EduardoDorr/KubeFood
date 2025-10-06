@@ -1,5 +1,4 @@
-﻿using KubeFood.Core.Events;
-using KubeFood.Core.Persistence.BoxMessages;
+﻿using KubeFood.Core.Persistence.BoxMessages;
 
 using Microsoft.EntityFrameworkCore;
 

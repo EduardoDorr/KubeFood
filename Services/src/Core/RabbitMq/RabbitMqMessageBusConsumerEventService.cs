@@ -1,5 +1,5 @@
 ﻿using KubeFood.Core.Events;
-using KubeFood.Core.Options;
+using KubeFood.Core.MessageBus;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -8,17 +8,17 @@ using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
-namespace KubeFood.Core.MessageBus;
+namespace KubeFood.Core.RabbitMq;
 
-public class MessageBusConsumerEvent<T> : MessageBusConsumerBase<T>
+public class RabbitMqMessageBusConsumerEventService<T> : MessageBusConsumerBase<T>
     where T : IEvent
 {
     private readonly IServiceProvider _serviceProvider;
 
-    public MessageBusConsumerEvent(
+    public RabbitMqMessageBusConsumerEventService(
         IServiceProvider serviceProvider,
-        ILogger<MessageBusConsumerEvent<T>> logger,
-        IOptions<RabbitMqConfigurationOptions> rabbitMqConfigurationOptions)
+        ILogger<RabbitMqMessageBusConsumerEventService<T>> logger,
+        IOptions<RabbitMqOptions> rabbitMqConfigurationOptions)
         : base(logger, rabbitMqConfigurationOptions)
     {
         _serviceProvider = serviceProvider;

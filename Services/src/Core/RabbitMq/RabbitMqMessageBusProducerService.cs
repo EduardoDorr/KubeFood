@@ -1,5 +1,5 @@
 ﻿using KubeFood.Core.Events;
-using KubeFood.Core.Options;
+using KubeFood.Core.MessageBus;
 
 using Microsoft.Extensions.Options;
 
@@ -8,13 +8,13 @@ using RabbitMQ.Client;
 using System.Text;
 using System.Text.Json;
 
-namespace KubeFood.Core.MessageBus;
+namespace KubeFood.Core.RabbitMq;
 
-public class MessageBusProducerRabbitMqService : IMessageBusProducerService
+public class RabbitMqMessageBusProducerService : IMessageBusProducerService
 {
     private readonly ConnectionFactory _connectionFactory;
 
-    public MessageBusProducerRabbitMqService(IOptions<RabbitMqConfigurationOptions> rabbitMqConfigurationOptions)
+    public RabbitMqMessageBusProducerService(IOptions<RabbitMqOptions> rabbitMqConfigurationOptions)
     {
         var rabbitMqConfigurationOptionsValue = rabbitMqConfigurationOptions.Value;
 

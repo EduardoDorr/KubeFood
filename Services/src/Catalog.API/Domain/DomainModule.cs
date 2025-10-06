@@ -1,4 +1,4 @@
-﻿using KubeFood.Core.Options;
+﻿using KubeFood.Core.RabbitMq;
 
 namespace KubeFood.Catalog.API.Domain;
 
@@ -13,7 +13,7 @@ public static class DomainModule
 
     private static IServiceCollection AddOptions(this IServiceCollection services, IConfiguration configuration)
     {
-        services.Configure<RabbitMqConfigurationOptions>(configuration.GetSection(RabbitMqConfigurationOptions.Name));
+        services.Configure<RabbitMqOptions>(configuration.GetSection(RabbitMqOptions.Name));
 
         return services;
     }

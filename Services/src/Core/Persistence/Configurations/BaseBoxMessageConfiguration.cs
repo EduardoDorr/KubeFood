@@ -11,6 +11,12 @@ public abstract class BaseBoxMessageConfiguration<TBase, TId> : IEntityTypeConfi
     {
         builder.HasKey(b => b.Id);
 
+        builder.Property(p => p.IdempotencyId)
+               .HasMaxLength(50);
+
+        builder.HasIndex(p => p.IdempotencyId)
+               .IsUnique();
+
         builder.Property(p => p.Type)
                .HasMaxLength(100)
                .IsRequired();

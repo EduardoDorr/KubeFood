@@ -3,6 +3,7 @@
 public abstract class BaseBoxMessage<TId>
 {
     public TId Id { get; set; }
+    public string? IdempotencyId { get; set; }
     public string Type { get; set; } = string.Empty;
     public string Content { get; set; } = string.Empty;
     public bool Processed { get; set; } = false;

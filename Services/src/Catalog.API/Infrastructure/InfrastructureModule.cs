@@ -3,7 +3,7 @@ using KubeFood.Catalog.API.Domain;
 using KubeFood.Catalog.API.Infrastructure.Persistence;
 using KubeFood.Catalog.API.Infrastructure.Persistence.Repositories;
 using KubeFood.Core;
-using KubeFood.Core.Options;
+using KubeFood.Core.MessageBus;
 using KubeFood.Core.Persistence.BoxMessages;
 using KubeFood.Core.Persistence.Interceptors;
 using KubeFood.Core.Persistence.UnitOfWork;
@@ -23,7 +23,7 @@ public static class InfrastructureModule
             .AddDbContext(configuration)
             .AddRepositories()
             .AddBackgroundJobs()
-            .AddMessageBus()
+            .AddMessageBus(configuration)
             .AddOptions(configuration)
             .AddOpenTelemetry(configuration);
 
@@ -61,16 +61,17 @@ public static class InfrastructureModule
         services.Configure<InboxMessageOptions>(configuration.GetSection(InboxMessageOptions.Name));
         services.Configure<OutboxMessageOptions>(configuration.GetSection(OutboxMessageOptions.Name));
         services.Configure<OpenTelemetryOptions>(configuration.GetSection(OpenTelemetryOptions.Name));
-        services.Configure<RabbitMqConfigurationOptions>(configuration.GetSection(RabbitMqConfigurationOptions.Name));
 
         return services;
     }
 
-    private static IServiceCollection AddMessageBus(this IServiceCollection services)
+    private static IServiceCollection AddMessageBus(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddMessageBusProducer();
         services.AddMessageBusProducerOutboxService<ObjectId, CatalogDbContext>();
-        services.AddMessageBusConsumerInboxService<ProductValidationRequestedEvent, ObjectId, CatalogDbContext>(
+        services.AddMessageBusOptions(configuration);
+        services.AddMessageBusProducer(configuration);
+        services.AddMessageBusConsumerInbox<ProductValidationRequestedEvent, ObjectId, CatalogDbContext>(
+            configuration,
             options => { options.QueueName = "OrderRequestedEvent"; });
 
         return services;

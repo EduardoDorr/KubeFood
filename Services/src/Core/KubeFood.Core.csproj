@@ -8,6 +8,11 @@
 
   <ItemGroup>
     <PackageReference Include="Azure.Identity" Version="1.15.0" />
+    <PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.4.0" />
+    <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.20.1" />
+    <PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.8.0" />
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.25.0" />
+    <PackageReference Include="Azure.Storage.Common" Version="12.24.0" />
     <PackageReference Include="FluentValidation" Version="12.0.0" />
     <PackageReference Include="Hashids.net" Version="1.7.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.8" />

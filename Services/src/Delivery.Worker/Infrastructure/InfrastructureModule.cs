@@ -1,5 +1,5 @@
 ﻿using KubeFood.Core;
-using KubeFood.Core.Options;
+using KubeFood.Core.MessageBus;
 using KubeFood.Core.Persistence.BoxMessages;
 using KubeFood.Core.Telemetry;
 using KubeFood.Delivery.Worker.Application.OrderProcessing;
@@ -18,7 +18,7 @@ public static class InfrastructureModule
         services
             .AddDbContext(configuration)
             .AddBackgroundJobs()
-            .AddMessageBus()
+            .AddMessageBus(configuration)
             .AddOptions(configuration)
             .AddOpenTelemetry(configuration);
 
@@ -45,16 +45,17 @@ public static class InfrastructureModule
     {
         services.Configure<InboxMessageOptions>(configuration.GetSection(InboxMessageOptions.Name));
         services.Configure<OutboxMessageOptions>(configuration.GetSection(OutboxMessageOptions.Name));
-        services.Configure<RabbitMqConfigurationOptions>(configuration.GetSection(RabbitMqConfigurationOptions.Name));
 
         return services;
     }
 
-    private static IServiceCollection AddMessageBus(this IServiceCollection services)
+    private static IServiceCollection AddMessageBus(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddMessageBusProducer();
         services.AddMessageBusProducerOutboxService<ObjectId, WorkerDbContext>();
-        services.AddMessageBusConsumerInboxService<OrderProcessingEvent, ObjectId, WorkerDbContext>(
+        services.AddMessageBusOptions(configuration);
+        services.AddMessageBusProducer(configuration);
+        services.AddMessageBusConsumerInbox<OrderProcessingEvent, ObjectId, WorkerDbContext>(
+            configuration,
             options => { options.QueueName = "OrderPaymentRequestedEvent"; });
 
         return services;

@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using System.Text.Json;
 
-using KubeFood.Core.Options;
+using KubeFood.Core.RabbitMq;
 
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -27,7 +27,7 @@ public abstract class MessageBusConsumerBase<T> : BackgroundService
 
     protected MessageBusConsumerBase(
         ILogger logger,
-        IOptions<RabbitMqConfigurationOptions> rabbitMqConfigurationOptions,
+        IOptions<RabbitMqOptions> rabbitMqConfigurationOptions,
         MessageBusConsumerOptions? consumerOptions = null)
     {
         _logger = logger;

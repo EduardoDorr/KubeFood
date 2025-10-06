@@ -1,5 +1,6 @@
 ﻿using KubeFood.Core.Filters;
 using KubeFood.Core.Models.Pagination;
+using KubeFood.Core.Results.Api;
 using KubeFood.Order.API.Application.CancelOrder;
 using KubeFood.Order.API.Application.CreateOrder;
 using KubeFood.Order.API.Application.GetOrder;
@@ -27,7 +28,7 @@ public static class OrderEndpoint
         {
             return await service.HandleAsync(new(pagination), cancellationToken);
         })
-        .Produces<PaginationResult<PaginationResult<Domain.Order>>>(StatusCodes.Status200OK)
+        .Produces<ApiResult<PaginationResult<PaginationResult<Domain.Order>>>>(StatusCodes.Status200OK)
         .Produces(StatusCodes.Status500InternalServerError);
 
         group.MapGet("/customer/{customerId}", async (
@@ -38,7 +39,7 @@ public static class OrderEndpoint
         {
             return await service.HandleAsync(new(customerId, pagination), cancellationToken);
         })
-        .Produces<PaginationResult<OrderViewModel>>(StatusCodes.Status200OK)
+        .Produces<ApiResult<PaginationResult<OrderViewModel>>>(StatusCodes.Status200OK)
         .Produces(StatusCodes.Status500InternalServerError);
 
         group.MapGet("/{id}", async (
@@ -48,7 +49,7 @@ public static class OrderEndpoint
         {
             return await service.HandleAsync(new(id), cancellationToken);
         })
-        .Produces<OrderViewModel>(StatusCodes.Status200OK)
+        .Produces<ApiResult<OrderViewModel>>(StatusCodes.Status200OK)
         .Produces(StatusCodes.Status404NotFound)
         .Produces(StatusCodes.Status500InternalServerError);
 
@@ -59,7 +60,7 @@ public static class OrderEndpoint
         {
             return await service.HandleAsync(command, cancellationToken);
         })
-        .Produces<int>(StatusCodes.Status201Created)
+        .Produces<ApiResult<int>>(StatusCodes.Status201Created)
         .Produces(StatusCodes.Status500InternalServerError);
 
         group.MapPut("/{id}", async (

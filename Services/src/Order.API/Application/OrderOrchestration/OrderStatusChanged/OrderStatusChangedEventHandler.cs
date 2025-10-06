@@ -1,6 +1,8 @@
 ﻿using KubeFood.Core.Events;
+using KubeFood.Core.MessageBus;
 using KubeFood.Core.Persistence.UnitOfWork;
 using KubeFood.Order.API.Domain;
+using KubeFood.Order.API.Domain.Events;
 
 namespace KubeFood.Order.API.Application.OrderOrchestration.OrderStatusChanged;
 
@@ -8,15 +10,18 @@ public sealed class OrderStatusChangedEventHandler : EventHandlerBase<OrderStatu
 {
     private readonly IOrderRepository _orderRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IMessageBusProducerOutboxService _messageBusProducerService;
 
     public OrderStatusChangedEventHandler(
         ILogger<OrderStatusChangedEventHandler> logger,
         IOrderRepository orderRepository,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork,
+        IMessageBusProducerOutboxService messageBusProducerService)
         : base(logger)
     {
         _orderRepository = orderRepository;
         _unitOfWork = unitOfWork;
+        _messageBusProducerService = messageBusProducerService;
     }
 
     protected override async Task ExecuteAsync(OrderStatusChangedEvent @event, CancellationToken cancellationToken = default)
@@ -35,6 +40,22 @@ public sealed class OrderStatusChangedEventHandler : EventHandlerBase<OrderStatu
 
         _orderRepository.Update(order);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        if (order.Status == OrderStatus.InPreparation)
+        {
+            var orderStockReservationConsumedEvent =
+                new OrderStockReservationConsumedEvent(
+                    order.UniqueId,
+                    order.Items
+                        .Select(i => new OrderStockReservationConsumedItemEvent(i.ProductId, i.Quantity))
+                        .ToList());
+
+            await _messageBusProducerService
+                .PublishAsync(
+                    orderStockReservationConsumedEvent,
+                    nameof(OrderStockReservationConsumedEvent),
+                    cancellationToken);
+        }
 
         if (order.Status == OrderStatus.Delivered)
         {

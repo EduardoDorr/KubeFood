@@ -1,6 +1,8 @@
-﻿namespace KubeFood.Core.Persistence.BoxMessages;
+﻿using KubeFood.Core.Options;
 
-public sealed class OutboxMessageOptions : BaseBoxMessageOptions
+namespace KubeFood.Core.Persistence.BoxMessages;
+
+public sealed class OutboxMessageOptions : BaseBoxMessageOptions, IOptionsSection
 {
-    public const string Name = "OutboxMessageConfiguration";
+    public static string Name => "OutboxMessageConfiguration";
 }

@@ -1,4 +1,4 @@
-﻿using KubeFood.Core.Options;
+﻿using KubeFood.Core.MessageBus;
 using KubeFood.Core.Persistence.BoxMessages;
 
 using Microsoft.EntityFrameworkCore;
@@ -11,17 +11,17 @@ using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
-namespace KubeFood.Core.MessageBus;
+namespace KubeFood.Core.RabbitMq;
 
-public class MessageBusConsumerInboxService<T, TId, TDbContext> : MessageBusConsumerBase<T>
+public class RabbitMqMessageBusConsumerInboxService<T, TId, TDbContext> : MessageBusConsumerBase<T>
     where TDbContext : DbContext
 {
     private readonly IServiceProvider _serviceProvider;
 
-    public MessageBusConsumerInboxService(
+    public RabbitMqMessageBusConsumerInboxService(
         IServiceProvider serviceProvider,
-        ILogger<MessageBusConsumerInboxService<T, TId, TDbContext>> logger,
-        IOptions<RabbitMqConfigurationOptions> rabbitMqConfigurationOptions,
+        ILogger<RabbitMqMessageBusConsumerInboxService<T, TId, TDbContext>> logger,
+        IOptions<RabbitMqOptions> rabbitMqConfigurationOptions,
         MessageBusConsumerOptions? consumerOptions = null)
         : base(logger, rabbitMqConfigurationOptions, consumerOptions)
     {
