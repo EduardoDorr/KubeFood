@@ -9,27 +9,7 @@ resource "azurerm_resource_group" "rg" {
   }
 }
 
-# 2. Create Container Registry (ACR)
-resource "azurerm_container_registry" "acr" {
-  name                = "${var.application_name}acr"
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
-  sku                 = "Standard"
-  admin_enabled       = false
-
-  tags = {
-    environment = var.environment
-    project     = var.application_name
-  }
-}
-
-resource "azurerm_role_assignment" "acr_push_permission" {
-  principal_id         = var.app_registration_object_id
-  role_definition_name = "AcrPush"
-  scope                = azurerm_container_registry.acr.id
-}
-
-# 3. Create a Log Analytics
+# 2. Create a Log Analytics
 resource "azurerm_log_analytics_workspace" "law" {
   name                = "${var.application_name}-logs"
   location            = var.resource_group_location
@@ -43,7 +23,7 @@ resource "azurerm_log_analytics_workspace" "law" {
   }
 }
 
-# 4. Create a Container Apps Environment
+# 3. Create a Container Apps Environment
 resource "azurerm_container_app_environment" "env" {
   name                       = "${var.application_name}-env"
   location                   = azurerm_resource_group.rg.location
@@ -51,131 +31,117 @@ resource "azurerm_container_app_environment" "env" {
   log_analytics_workspace_id = azurerm_log_analytics_workspace.law.id
 }
 
-# 5. Create a Container Apps for Catalog.API
-resource "azurerm_container_app" "catalog" {
-  name                         = "${var.application_name}-catalog-app"
+# 4. Create a Container App for Jaeger
+module "inventory_app" {
+  source = "./modules/container_app"
+
+  application_name             = var.application_name
+  app_suffix                   = "jaeger"
   container_app_environment_id = azurerm_container_app_environment.env.id
   resource_group_name          = azurerm_resource_group.rg.name
-  revision_mode                = "Single"
+  container_name               = "jaeger"
+  image                        = "jaegertracing/all-in-one:latest"
+  cpu                          = "0.5"
+  memory                       = "1Gi"
+  target_port                  = 16686
 
   tags = {
     environment = var.environment
     project     = var.application_name
-  }
-
-  template {
-    container {
-      name   = "catalog-api"
-      image  = "${azurerm_container_registry.acr.login_server}/catalog-api:latest"
-      cpu    = "0.5"
-      memory = "0.5Gi"
-
-      env {
-        name  = "ConnectionStrings__CatalogDbConnection"
-        value = "mongodb://catalogdb:27017"
-      }
-
-      env {
-        name  = "RabbitMqConfiguration__HostName"
-        value = "rabbitmq"
-      }
-    }
-
-    max_replicas = 2
-    min_replicas = 1
-  }
-
-  ingress {
-    external_enabled = true
-    target_port      = 80
-    traffic_weight {
-      percentage = 100
-    }
   }
 }
 
-# 6. Create a Container Apps for Order.API
-resource "azurerm_container_app" "order" {
-  name                         = "${var.application_name}-order-app"
+# 5. Create a Container App for Seq
+module "inventory_app" {
+  source = "./modules/container_app"
+
+  application_name             = var.application_name
+  app_suffix                   = "seq"
   container_app_environment_id = azurerm_container_app_environment.env.id
   resource_group_name          = azurerm_resource_group.rg.name
-  revision_mode                = "Single"
+  container_name               = "seq"
+  image                        = "datalust/seq:latest"
+  cpu                          = "0.5"
+  memory                       = "1Gi"
+
+  env_vars = {
+    "ACCEPT_EULA" = "Y"
+  }
 
   tags = {
     environment = var.environment
     project     = var.application_name
-  }
-
-  template {
-    container {
-      name   = "order-api"
-      image  = "${azurerm_container_registry.acr.login_server}/order-api:latest"
-      cpu    = "0.5"
-      memory = "0.5Gi"
-
-      env {
-        name  = "ConnectionStrings__OrderDbConnection"
-        value = "mongodb://Orderdb:27017"
-      }
-
-      env {
-        name  = "RabbitMqConfiguration__HostName"
-        value = "rabbitmq"
-      }
-    }
-
-    max_replicas = 2
-    min_replicas = 1
-  }
-
-  ingress {
-    external_enabled = true
-    target_port      = 80
-    traffic_weight {
-      percentage = 100
-    }
   }
 }
 
-# 5. Create a Container Apps for Inventory.API
-resource "azurerm_container_app" "inventory" {
-  name                         = "${var.application_name}-inventory-app"
+# 6. Create a Container Apps for Catalog.API
+module "inventory_app" {
+  source = "./modules/container_app"
+
+  application_name             = var.application_name
+  app_suffix                   = "catalog-app"
   container_app_environment_id = azurerm_container_app_environment.env.id
   resource_group_name          = azurerm_resource_group.rg.name
-  revision_mode                = "Single"
+  container_name               = "catalog-api"
+  image                        = "${container_registry}/${application_name}-catalog-api:latest"
+  cpu                          = "0.5"
+  memory                       = "0.5Gi"
+
+  env_vars = {
+    "ConnectionStrings__catalogDbConnection" = "mongodb://catalogdb:27017"
+    "RabbitMqConfiguration__HostName"        = "rabbitmq"
+  }
 
   tags = {
     environment = var.environment
     project     = var.application_name
   }
+}
 
-  template {
-    container {
-      name   = "inventory-api"
-      image  = "${azurerm_container_registry.acr.login_server}/inventory-api:latest"
-      cpu    = "0.5"
-      memory = "0.5Gi"
+# 7. Create a Container Apps for Order.API
+module "inventory_app" {
+  source = "./modules/container_app"
 
-      env {
-        name  = "ConnectionStrings__InventoryDbConnection"
-        value = "mongodb://inventorydb:27017"
-      }
+  application_name             = var.application_name
+  app_suffix                   = "order-app"
+  container_app_environment_id = azurerm_container_app_environment.env.id
+  resource_group_name          = azurerm_resource_group.rg.name
+  container_name               = "order-api"
+  image                        = "${container_registry}/${application_name}-order-api:latest"
+  cpu                          = "0.5"
+  memory                       = "0.5Gi"
 
-      env {
-        name  = "RabbitMqConfiguration__HostName"
-        value = "rabbitmq"
-      }
-    }
-
-    max_replicas = 2
-    min_replicas = 1
+  env_vars = {
+    "ConnectionStrings__orderDbConnection" = "mongodb://orderdb:27017"
+    "RabbitMqConfiguration__HostName"      = "rabbitmq"
   }
 
-  ingress {
-    external_enabled = true
-    target_port      = 80
-    traffic_weight {
-      percentage = 100
-    }
+  tags = {
+    environment = var.environment
+    project     = var.application_name
+  }
+}
+
+# 8. Create a Container Apps for Inventory.API
+module "inventory_app" {
+  source = "./modules/container_app"
+
+  application_name             = var.application_name
+  app_suffix                   = "inventory-app"
+  container_app_environment_id = azurerm_container_app_environment.env.id
+  resource_group_name          = azurerm_resource_group.rg.name
+  container_name               = "inventory-api"
+  image                        = "${container_registry}/${application_name}-inventory-api:latest"
+  cpu                          = "0.5"
+  memory                       = "0.5Gi"
+
+  env_vars = {
+    "ConnectionStrings__InventoryDbConnection" = "mongodb://inventorydb:27017"
+    "RabbitMqConfiguration__HostName"          = "rabbitmq"
+  }
+
+  tags = {
+    environment = var.environment
+    project     = var.application_name
   }
 }

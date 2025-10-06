@@ -1,0 +1,5 @@
+app_registration_object_id = "19ab8758-2a6e-4ddf-bac2-e9d11a752175"
+container_registry = "eduardodorr"
+catalogdb_connection_string = "mongodb://catalogdb:27017"
+orderdb_connection_string = "mongodb://orderdb:27017"
+inventorydb_connection_string = "mongodb://inventorydb:27017"

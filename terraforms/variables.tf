@@ -18,6 +18,25 @@ variable "environment" {
 
 variable "app_registration_object_id" {
   type        = string
-  default     = "19ab8758-2a6e-4ddf-bac2-e9d11a752175"
   description = "App Registration's Object ID."
+}
+
+variable "container_registry" {
+  type        = string
+  description = "Container Registry's name."
+}
+
+variable "catalogdb_connection_string" {
+  type        = string
+  description = "CatalogApi's connection string."
+}
+
+variable "orderdb_connection_string" {
+  type        = string
+  description = "OrderApi's connection string."
+}
+
+variable "inventorydb_connection_string" {
+  type        = string
+  description = "InventoryApi's connection string."
 }
