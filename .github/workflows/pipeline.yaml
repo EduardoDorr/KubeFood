@@ -11,7 +11,7 @@ jobs:
     uses: ./.github/workflows/docker-build.yaml
     secrets: inherit
     with:
-      context: Services/src
+      context: backends
       dockerfile: Catalog.API/Dockerfile
       docker_tag: latest
       service_name: kubefood-catalog-api
@@ -20,7 +20,7 @@ jobs:
     uses: ./.github/workflows/docker-build.yaml
     secrets: inherit
     with:
-      context: Services/src
+      context: backends
       dockerfile: Order.API/Dockerfile
       docker_tag: latest
       service_name: kubefood-order-api
@@ -29,7 +29,7 @@ jobs:
     uses: ./.github/workflows/docker-build.yaml
     secrets: inherit
     with:
-      context: Services/src
+      context: backends
       dockerfile: Inventory.API/Dockerfile
       docker_tag: latest
       service_name: kubefood-inventory-api

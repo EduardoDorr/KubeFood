@@ -2,12 +2,12 @@ services:
   seq:
     image: datalust/seq:latest
     container_name: seq
-    restart: unless-stopped
     ports:
       - "5341:80"
     environment:
       - ACCEPT_EULA=Y
       - SEQ_FIRSTRUN_ADMINPASSWORD=Admin123
+    restart: unless-stopped
     volumes:
       - seq-data:/data
     networks:
@@ -28,6 +28,7 @@ services:
       - "14269:14269"   # health check
     environment:
       COLLECTOR_ZIPKIN_HTTP_PORT: 9411
+    restart: unless-stopped
     networks:
       - app-network
 
@@ -45,6 +46,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    restart: unless-stopped
     volumes:
       - rabbitmq-data:/var/lib/rabbitmq
     networks:
@@ -55,14 +57,14 @@ services:
       container_name: catalogdb
       ports:
           - "27018:27017"
-      restart: always
       healthcheck:
         test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
         interval: 10s
         timeout: 3s
         retries: 5
+      restart: unless-stopped
       volumes:
-          - ./data/db:/data/db
+          - mongo-data:/data/db
       networks:
           - app-network
   
@@ -76,12 +78,12 @@ services:
       MYSQL_PASSWORD: Admin123
     ports:
       - "3307:3306"
-    restart: always
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uadmin", "-padmin"]
       interval: 10s
       retries: 5
       start_period: 20s
+    restart: unless-stopped
     volumes:
       - mysql-data:/var/lib/mysql
     networks:
@@ -96,96 +98,93 @@ services:
       MSSQL_PID: 'Developer'
     ports:
       - "1434:1433"
-    restart: always
     healthcheck:
       test: ["CMD-SHELL", "pgrep sqlservr > /dev/null || exit 1"]
       interval: 10s
       retries: 10
       start_period: 10s
       timeout: 3s
+    restart: unless-stopped
     volumes:
-      - mssql_data:/var/opt/mssql
+      - mssql-data:/var/opt/mssql
     networks:
       - app-network
 
   catalogapi:
-      image: catalogapi
+      image: eduardodorr/catalogapi
       container_name: catalogapi
       build:
-        context: ./Services/src
+        context: ./backends
         dockerfile: ./Catalog.Api/Dockerfile
       environment:
           - ASPNETCORE_ENVIRONMENT=Development
           - ASPNETCORE_HTTP_PORTS=8080
           - ASPNETCORE_HTTPS_PORTS=8081
-          - ASPNETCORE_Kestrel__Certificates__Default__Password=MyPassword123
+          - ASPNETCORE_Kestrel__Certificates__Default__Password=Admin123
           - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
           - ConnectionStrings__CatalogDbConnection=mongodb://catalogdb:27017
           - RabbitMqConfiguration__HostName=rabbitmq
       ports:
           - "3000:8080"
           - "3030:8081"
-      volumes:
-          - ./Services/aspnetapp.pfx:/https/aspnetapp.pfx:ro
       depends_on:
         catalogdb:
           condition: service_healthy
         rabbitmq:
           condition: service_healthy
+      restart: unless-stopped
       networks:
           - app-network
 
   orderapi:
-      image: orderapi
+      image: eduardodorr/orderapi
       container_name: orderapi
       build:
-        context: ./Services/src
+        context: ./backends
         dockerfile: ./Order.Api/Dockerfile
       environment:
           - ASPNETCORE_ENVIRONMENT=Development
           - ASPNETCORE_HTTP_PORTS=8080
           - ASPNETCORE_HTTPS_PORTS=8081
-          - ASPNETCORE_Kestrel__Certificates__Default__Password=MyPassword123
+          - ASPNETCORE_Kestrel__Certificates__Default__Password=Admin123
           - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
-          - ConnectionStrings__OrderDbConnection=Server=orderdb;Database=orderdb;Uid=admin;Pwd=Admin123;AllowPublicKeyRetrieval=True;SslMode=None;
+          - ConnectionStrings__OrderDbConnection=Server=orderdb;Database=orderdb;Uid=admin;Pwd=Admin123;AllowPublicKeyRetrieval=True;
           - RabbitMqConfiguration__HostName=rabbitmq
       ports:
           - "3001:8080"
           - "3031:8081"
-      volumes:
-          - ./Services/aspnetapp.pfx:/https/aspnetapp.pfx:ro
       depends_on:
         orderdb:
           condition: service_healthy
         rabbitmq:
           condition: service_healthy
+      restart: unless-stopped
       networks:
           - app-network
 
   inventoryapi:
-      image: inventoryapi
+      image: eduardodorr/inventoryapi
       container_name: inventoryapi
       build:
-        context: ./Services/src
+        context: ./backends
         dockerfile: ./Inventory.Api/Dockerfile
       environment:
           - ASPNETCORE_ENVIRONMENT=Development
           - ASPNETCORE_HTTP_PORTS=8080
           - ASPNETCORE_HTTPS_PORTS=8081
-          - ASPNETCORE_Kestrel__Certificates__Default__Password=MyPassword123
+          - ASPNETCORE_Kestrel__Certificates__Default__Password=Admin123
           - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
           - ConnectionStrings__InventoryDbConnection=Server=inventorydb;Database=inventorydb;User Id=sa;Password=Admin123;TrustServerCertificate=True;
           - RabbitMqConfiguration__HostName=rabbitmq
       ports:
           - "3002:8080"
           - "3032:8081"
-      volumes:
-          - ./Services/aspnetapp.pfx:/https/aspnetapp.pfx:ro
       depends_on:
         inventorydb:
           condition: service_healthy
         rabbitmq:
           condition: service_healthy
+      restart: unless-stopped
       networks:
           - app-network
 
@@ -198,4 +197,5 @@ volumes:
   rabbitmq-data:
   mysql-data:
     driver: local
-  mssql_data:
+  mssql-data:
+  mongo-data:
