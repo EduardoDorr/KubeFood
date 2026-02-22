@@ -6,6 +6,7 @@ using KubeFood.Catalog.API.Application.GetProductsByIds;
 using KubeFood.Catalog.API.Application.Models;
 using KubeFood.Catalog.API.Application.UpdateProduct;
 using KubeFood.Catalog.API.Application.UpdateProductImage;
+using KubeFood.Core.CommandQueries;
 using KubeFood.Core.Filters;
 using KubeFood.Core.Models.Pagination;
 using KubeFood.Core.Results.Api;
